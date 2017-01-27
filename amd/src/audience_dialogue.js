@@ -26,7 +26,7 @@ define([
     'jquery',
     'core/ajax',
     'core/templates',
-    'block_totara_featured_links/visibility_form',
+    'block_featured_links/visibility_form',
     'core/str',
     'core/config'
 ], function ($, ajax, templates, vis_form, mdlstr, config){
@@ -103,7 +103,7 @@ define([
 
                 var promises = ajax.call([
                     {
-                        methodname: 'block_totara_featured_links_external_add_audience_list_item', args: {
+                        methodname: 'block_featured_links_external_add_audience_list_item', args: {
                         cohortid: itemid
                         }
                     }
@@ -127,7 +127,7 @@ define([
             var required_strings = [];
             required_strings.push({key: 'ok', component: 'moodle'});
             required_strings.push({key: 'cancel', component: 'moodle'});
-            required_strings.push({key: 'audience_add', component: 'block_totara_featured_links'});
+            required_strings.push({key: 'audience_add', component: 'block_featured_links'});
 
             mdlstr.get_strings(required_strings).done(function(string_results){
                 strings = {

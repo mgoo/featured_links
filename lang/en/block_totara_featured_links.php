@@ -82,9 +82,9 @@ $string['tile_size'] = 'Tile Size';
 $string['tile_title'] = 'Title';
 $string['tile_types'] = 'Tile Type';
 $string['tilerules_title'] = 'Custom Rules';
-$string['totara_featured_links:addinstance'] = 'Add a new Featured Links block';
-$string['totara_featured_links:edit'] = 'Edit the tiles in the block';
-$string['totara_featured_links:myaddinstance'] = 'Add a new Featured Links block to the page';
+$string['featured_links:addinstance'] = 'Add a new Featured Links block';
+$string['featured_links:edit'] = 'Edit the tiles in the block';
+$string['featured_links:myaddinstance'] = 'Add a new Featured Links block to the page';
 $string['url_title'] = 'URL';
 $string['url_title_help'] = 'Urls starting with a / will have the wwwroot added when the block is loaded. This is the preferred way of doing internal links';
 

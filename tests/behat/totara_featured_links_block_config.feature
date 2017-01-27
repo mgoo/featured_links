@@ -1,4 +1,4 @@
-@block @javascript @totara @block_totara_featured_links
+@block @javascript @block_featured_links
 Feature: Test edit the block config for the featured links block
   In order to be able to make the block look good
   the user needs to be able to configure the block

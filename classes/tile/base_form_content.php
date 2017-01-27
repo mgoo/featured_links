@@ -54,11 +54,11 @@ abstract class base_form_content extends \moodleform {
     public function definition () {
         global $DB, $CFG;
         $mform = $this->_form;
-        $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES']['number'] = [$CFG->dirroot.'/blocks/totara_featured_links/classes/form/element/number.php', 'block_totara_featured_links\form\element\number'];
+        $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES']['number'] = [$CFG->dirroot.'/blocks/featured_links/classes/form/element/number.php', 'block_featured_links\form\element\number'];
 
-        $mform->addElement('header', 'form_header', get_string('content_edit', 'block_totara_featured_links'));
+        $mform->addElement('header', 'form_header', get_string('content_edit', 'block_featured_links'));
 
-        $classes_arr = \block_totara_featured_links\lib\class_component::get_namespace_classes('tile', 'block_totara_featured_links\tile\base');
+        $classes_arr = \block_featured_links\lib\class_component::get_namespace_classes('tile', 'block_featured_links\tile\base');
         $classes  = [];
         foreach($classes_arr as $class){
             if(is_subclass_of($class, base::get_class())){
@@ -71,7 +71,7 @@ abstract class base_form_content extends \moodleform {
             $class_options["\\" . $class] = $class::get_name();
         }
 
-        $mform->addElement('select', 'type', get_string('tile_types', 'block_totara_featured_links'), $class_options);
+        $mform->addElement('select', 'type', get_string('tile_types', 'block_featured_links'), $class_options);
 
         $this->specific_definition($mform);
 
@@ -79,7 +79,7 @@ abstract class base_form_content extends \moodleform {
         if ($DB->count_records('block_featured_tiles', ['id' => $this->tile->id]) == 0) {
             $max++;
         }
-        $mform->addElement('number', 'sort', get_string('tile_position', 'block_totara_featured_links'), ['type' => 'number', 'max' => ($max == 0 ? 1 : $max), 'min' => 1]);
+        $mform->addElement('number', 'sort', get_string('tile_position', 'block_featured_links'), ['type' => 'number', 'max' => ($max == 0 ? 1 : $max), 'min' => 1]);
         $mform->addRule('sort', get_string('error'), 'numeric');
         $mform->addRule('sort', get_string('error'), 'required', true);
         $mform->setType('sort', PARAM_INT);

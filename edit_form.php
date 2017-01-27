@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class block_totara_featured_links_edit_form
  * This is the edit form for the block
  */
-class block_totara_featured_links_edit_form extends \block_edit_form{
+class block_featured_links_edit_form extends \block_edit_form{
 
     /**
      * defines the form for the custom block options
@@ -39,17 +39,17 @@ class block_totara_featured_links_edit_form extends \block_edit_form{
     protected function specific_definition($mform) {
         $mform->addElement('header', 'config_header', get_string('blocksettings', 'block'));
 
-        $mform->addElement('text', 'config_title', get_string('block_header', 'block_totara_featured_links'), []);
+        $mform->addElement('text', 'config_title', get_string('block_header', 'block_featured_links'), []);
         $mform->addElement(
             'select',
             'config_size',
-            get_string('tile_size', 'block_totara_featured_links'),
-            ['large' => get_string('size_large', 'block_totara_featured_links'),
-                'medium' => get_string('size_medium', 'block_totara_featured_links'),
-                'small' => get_string('size_small', 'block_totara_featured_links')
+            get_string('tile_size', 'block_featured_links'),
+            ['large' => get_string('size_large', 'block_featured_links'),
+                'medium' => get_string('size_medium', 'block_featured_links'),
+                'small' => get_string('size_small', 'block_featured_links')
             ]
         );
-        $mform->addElement('text', 'config_manual_id', get_string('manual_id', 'block_totara_featured_links'));
+        $mform->addElement('text', 'config_manual_id', get_string('manual_id', 'block_featured_links'));
 
         $mform->setType('config_title', PARAM_TEXT);
         $mform->setType('config_size', PARAM_TEXT);

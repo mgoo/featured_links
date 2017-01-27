@@ -28,7 +28,7 @@
  * @param int $oldversion
  * @return bool
  */
-function xmldb_block_totara_featured_links_upgrade($oldversion) {
+function xmldb_block_featured_links_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
     // This is unused as the block has not being released yet.
