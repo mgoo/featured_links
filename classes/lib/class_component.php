@@ -7,7 +7,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_totara_featured_links\lib;
+namespace block_featured_links\lib;
 
 class class_component extends \core_component
 {

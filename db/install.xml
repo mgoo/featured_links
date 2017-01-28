@@ -18,12 +18,12 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   ~
   ~ @author Andrew McGhie <andrew.mcghie@totaralearning.com>
-  ~ @package block_totara_featured_links
+  ~ @package block_featured_links
   ~
   ~
   -->
 
-<XMLDB PATH="blocks/totara_featured_links/db" VERSION="20170112" COMMENT="XMLDB file for Totara featured links block"
+<XMLDB PATH="blocks/featured_links/db" VERSION="20170112" COMMENT="XMLDB file for Totara featured links block"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -67,7 +67,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="id" TYPE="primary" FIELDS="id" COMMENT="The tile id"/>
-        <KEY NAME="blockid" TYPE="foreign" FIELDS="blockid" REFTABLE="block_totara_featured_links" REFFIELDS="id"
+        <KEY NAME="blockid" TYPE="foreign" FIELDS="blockid" REFTABLE="block_featured_links" REFFIELDS="id"
              COMMENT="Id for the block that the tile is in"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"
              COMMENT="The user who created the tile"/>

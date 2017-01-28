@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
@@ -29,11 +29,11 @@
 
 define(['jquery', 'core/ajax', 'core/str'], function($, ajax, mdlstr){
     return{
-        block_totara_featured_links_remove_tile: function(){
+        block_featured_links_remove_tile: function(){
             var required_strings = [];
             required_strings.push({key: 'delete', component: 'core'});
             required_strings.push({key: 'cancel', component: 'core'});
-            required_strings.push({key: 'confirm', component: 'block_totara_featured_links'});
+            required_strings.push({key: 'confirm', component: 'block_featured_links'});
 
             mdlstr.get_strings(required_strings).done(function(strings){
                 $('a[type="remove"]').click(function(event){
@@ -53,7 +53,7 @@ define(['jquery', 'core/ajax', 'core/str'], function($, ajax, mdlstr){
 
                         var promises = ajax.call([
                             {
-                                methodname: 'block_totara_featured_links_external_remove_tile', args: {
+                                methodname: 'block_featured_links_external_remove_tile', args: {
                                 blockinstanceid: blockid,
                                 tileid: tileid
                             }

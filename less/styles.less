@@ -1,6 +1,5 @@
-@import (reference) "../../../theme/roots/less/bootstrap3/variables.less";
-@import (reference) "../../../theme/roots/less/totara/variables.less";
-
+@import (reference) "../../../theme/bootstrapbase/less/bootstrap/variables.less";
+@padding-small-horizontal: 4px;
 @padding-vertical: 4px;
 
 div.tf_element_input input[type="color"]{
@@ -54,7 +53,7 @@ div.tf_element_input input[type="color"]{
         display: table; // for firefox and edge
     }
 
-    div.block-totara-featured-links-default-content:not(.block-featured-links-edit){
+    div.block-featured-links-default-content:not(.block-featured-links-edit){
         &:empty{
             display: none;
         }
@@ -71,17 +70,17 @@ div.tf_element_input input[type="color"]{
         max-height: 100%;
 
         background: rgba(0, 0, 0, .5);
-        color: @label-color;
+        color: @linkColor;
 
         h4 {
-            font-size: @font-size-h4;
+            font-size: @fontSizeSmall;
             margin-bottom: @padding-vertical;
-            font-weight: @alert-link-font-weight;
+            font-weight: @headingsFontWeight;
         }
         p {
             margin-bottom: @padding-vertical;
         }
-        padding: @padding-small-vertical + @padding-small-vertical;
+        padding: @padding-vertical + @padding-vertical;
     }
 
     .block-featured-links-edit .moodle-actionmenu,
@@ -102,11 +101,11 @@ div.tf_element_input input[type="color"]{
             z-index: 3;
 
             .ft-stack-suffix{
-                text-shadow: -1px 0 0 @block-actions-bg,
-                    1px 0 0 @block-actions-bg,
-                    0 -1px @block-actions-bg,
-                    0 1px 0 @block-actions-bg,
-                    1px 1px 0 @block-actions-bg;
+                text-shadow: -1px 0 0 @gray,
+                    1px 0 0 @gray,
+                    0 -1px @gray,
+                    0 1px 0 @gray,
+                    1px 1px 0 @gray;
             }
         }
         position: absolute;
@@ -153,7 +152,7 @@ div.tf_element_input input[type="color"]{
     display: flex;
     justify-content: center;
     align-items: center;
-    border: @link-color dashed medium;
+    border: @linkColor dashed medium;
     background-color: rgb(239, 239, 239);
     a {
         position: absolute;

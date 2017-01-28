@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
 
-namespace block_totara_featured_links\tile;
+namespace block_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * This is the base class for the default tile it can be an example of how to do this in the tile mods
  * Class default_tile
- * @package block_totara_featured_links\tile
+ * @package block_featured_links\tile
  */
 class default_tile extends base{
     const FILE_NAME = 'background_img';
     const USED_FIELDS = ['heading', 'textbody', 'url', 'background_color', 'background_img', 'alt_text'];
-    protected $CLASS_NAME = '\block_totara_featured_links\tile\default_tile';
+    protected $CLASS_NAME = '\block_featured_links\tile\default_tile';
 
 
     /**
@@ -58,7 +58,7 @@ class default_tile extends base{
      * @return string
      */
     public static function get_name() {
-        return get_string('default_name', 'block_totara_featured_links');
+        return get_string('default_name', 'block_featured_links');
     }
 
     /**
@@ -146,7 +146,7 @@ class default_tile extends base{
      */
     public function render_content(\core_renderer $renderer) {
         $data = $this->get_template_data();
-        $html_data = $renderer->render_from_template('block_totara_featured_links/content', $data);
+        $html_data = $renderer->render_from_template('block_featured_links/content', $data);
         return $html_data;
     }
 
@@ -169,14 +169,14 @@ class default_tile extends base{
         $draftitemid = file_get_submitted_draft_itemid(self::FILE_NAME);
         file_save_draft_area_files($draftitemid,
             \context_block::instance($this->blockid)->__get('id'),
-            'block_totara_featured_links', 'tile_background',
+            'block_featured_links', 'tile_background',
             $draftitemid,
             ['subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1]);
 
         // Gets the url to the new file.
         $fs = get_file_storage();
         $files = $fs->get_area_files(\context_block::instance($this->blockid)->__get('id'),
-            'block_totara_featured_links',
+            'block_featured_links',
             'tile_background',
             $draftitemid,
             '',

@@ -18,13 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
-namespace block_totara_featured_links\tile;
+namespace block_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class base_form
  * each type of form should extend this class.
  * However plugin tile types should not extend this class
- * @package block_totara_featured_links\tile
+ * @package block_featured_links\tile
  */
 abstract class base_form{
 

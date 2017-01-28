@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -26,11 +26,11 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Tests the Totara featured links block.
  */
-class block_totara_featured_links_testcase extends advanced_testcase {
+class block_featured_links_testcase extends advanced_testcase {
 
     /**
      * The block generator instance for the test.
-     * @var block_totara_featured_links_generator $generator
+     * @var block_featured_links_generator $generator
      */
     protected $blockgenerator;
 
@@ -39,7 +39,7 @@ class block_totara_featured_links_testcase extends advanced_testcase {
      */
     public function setUp() {
         parent::setUp();
-        $this->blockgenerator = $this->getDataGenerator()->get_plugin_generator('block_totara_featured_links');
+        $this->blockgenerator = $this->getDataGenerator()->get_plugin_generator('block_featured_links');
     }
 
     /**
@@ -52,7 +52,7 @@ class block_totara_featured_links_testcase extends advanced_testcase {
 
         $this->assertEquals(
             0,
-            $DB->count_records('block_instances', ['blockname' => 'totara_featured_links']),
+            $DB->count_records('block_instances', ['blockname' => 'featured_links']),
             'Unexpected Totara featured links block instance found.'
         );
 
@@ -64,14 +64,14 @@ class block_totara_featured_links_testcase extends advanced_testcase {
         $this->blockgenerator->create_default_tile($instance2->id);
         $this->blockgenerator->create_default_tile($instance2->id);
 
-        $this->assertEquals(2, $DB->count_records('block_instances', ['blockname' => 'totara_featured_links']));
+        $this->assertEquals(2, $DB->count_records('block_instances', ['blockname' => 'featured_links']));
         $this->assertEquals(2, $DB->count_records('block_featured_tiles', ['blockid' => $instance1->id]));
         $this->assertEquals(3, $DB->count_records('block_featured_tiles', ['blockid' => $instance2->id]));
 
         // To delete the block we use the block API, this will in turn be expected to call >instance_delete().
         blocks_delete_instance($instance1);
 
-        $this->assertEquals(1, $DB->count_records('block_instances', ['blockname' => 'totara_featured_links']));
+        $this->assertEquals(1, $DB->count_records('block_instances', ['blockname' => 'featured_links']));
         $this->assertEquals(0, $DB->count_records('block_featured_tiles', ['blockid' => $instance1->id]));
         $this->assertEquals(3, $DB->count_records('block_featured_tiles', ['blockid' => $instance2->id]));
     }

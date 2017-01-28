@@ -1,4 +1,4 @@
-@block @totara @javascript @block_totara_featured_links
+@block @totara @javascript @block_featured_links
 Feature: Block edit test block
   In order to use the block
   The user must be able
@@ -18,7 +18,7 @@ Feature: Block edit test block
     And I click on "Save changes" "button"
 
   Scenario: Check that the tile can be created and that it contains the initial value
-    Then ".block_totara_featured_links" "css_element" should exist
+    Then ".block_featured_links" "css_element" should exist
     And I should see "default description"
 
   Scenario Outline: Editing the for actually changes the values in the tile

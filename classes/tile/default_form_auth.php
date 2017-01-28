@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
 
-namespace block_totara_featured_links\tile;
+namespace block_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +35,7 @@ use totara_form\form\element\text;
  * Class default_form_auth
  * This is the visibility form for the default tile type
  * You can use this as an example for other tile types
- * @package block_totara_featured_links\tile
+ * @package block_featured_links\tile
  */
 class default_form_auth extends base_form_auth{
 

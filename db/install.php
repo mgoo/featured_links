@@ -18,12 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
-function xmldb_block_totara_featured_links_install() {
+function xmldb_block_featured_links_install() {
     // This just has to exist it doesn't seem to matter if its empty.
 }

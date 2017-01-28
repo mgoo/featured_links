@@ -18,37 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
 $functions = [
-    'block_totara_featured_links_external_remove_tile' => [
-        'classname'   => 'block_totara_featured_links_external',
+    'block_featured_links_external_remove_tile' => [
+        'classname'   => 'block_featured_links_external',
         'methodname'  => 'remove_tile',
-        'classpath'   => 'blocks/totara_featured_links/externallib.php',
+        'classpath'   => 'blocks/featured_links/externallib.php',
         'description' => 'Removes a Tile',
         'type'        => 'write',
         'capabilities'=> '',
         'ajax'        => true,
         'loginrequired' => true,
     ],
-    'block_totara_featured_links_external_add_audience_list_item' => [
-        'classname'   => 'block_totara_featured_links_external',
+    'block_featured_links_external_add_audience_list_item' => [
+        'classname'   => 'block_featured_links_external',
         'methodname'  => 'add_audience_list_item',
-        'classpath'   => 'blocks/totara_featured_links/externallib.php',
+        'classpath'   => 'blocks/featured_links/externallib.php',
         'description' => 'renders a list item',
         'type'        => 'read',
         'capabilities'=> '',
         'ajax'        => true,
         'loginrequired' => true,
     ],
-    'block_totara_featured_links_external_render_form' => [
-        'classname'   => 'block_totara_featured_links_external',
+    'block_featured_links_external_render_form' => [
+        'classname'   => 'block_featured_links_external',
         'methodname'  => 'render_form',
-        'classpath'   => 'blocks/totara_featured_links/externallib.php',
+        'classpath'   => 'blocks/featured_links/externallib.php',
         'description' => 'renders a content form',
         'type'        => 'read',
         'capabilities'=> '',

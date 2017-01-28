@@ -18,12 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
-namespace block_totara_featured_links\form\validator;
+namespace block_featured_links\form\validator;
 
 
 use totara_form\element_validator;
@@ -32,7 +32,7 @@ use totara_form\element_validator;
 /**
  * Class alt_text_required
  * A validator that checks if the default_content_form should have an alt text
- * @package block_totara_featured_links\form\validator
+ * @package block_featured_links\form\validator
  */
 class alt_text_required extends element_validator {
 
@@ -48,7 +48,7 @@ class alt_text_required extends element_validator {
             && (!isset($title) || $title == '')
             && (!isset($description) || $description == '')
             && (!isset($alt_text) || $alt_text == '')) {
-            $this->element->add_error(get_string('requires_alt_text', 'block_totara_featured_links'));
+            $this->element->add_error(get_string('requires_alt_text', 'block_featured_links'));
         }
     }
 }

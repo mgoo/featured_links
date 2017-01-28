@@ -18,25 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-use block_totara_featured_links\tile\base;
+use block_featured_links\tile\base;
 
 /**
- * Class block_totara_featured_links
+ * Class block_featured_links
  * This is the main class for the block
  * Handel's block level things
  */
-class block_totara_featured_links extends block_base {
+class block_featured_links extends block_base {
 
     /**
      * Initializes the block
      */
     public function init() {
-        $this->title = get_string('pluginname', 'block_totara_featured_links');
+        $this->title = get_string('pluginname', 'block_featured_links');
         $this->blockname = get_class($this);
     }
 
@@ -46,8 +46,8 @@ class block_totara_featured_links extends block_base {
     public function get_required_javascript() {
         parent::get_required_javascript();
         $this->page->requires->strings_for_js(['delete', 'cancel'], 'core');
-        $this->page->requires->strings_for_js(['confirm'], 'block_totara_featured_links');
-        $this->page->requires->js_call_amd('block_totara_featured_links/ajax', 'block_totara_featured_links_remove_tile');
+        $this->page->requires->strings_for_js(['confirm'], 'block_featured_links');
+        $this->page->requires->js_call_amd('block_featured_links/ajax', 'block_featured_links_remove_tile');
     }
 
     /**
@@ -105,23 +105,23 @@ class block_totara_featured_links extends block_base {
             'title' => $this->config->title,
             'manual_id' => $this->config->manual_id,
             'instanceid' => $this->instance->id,
-            'hidden_text' => get_string('hidden_text', 'block_totara_featured_links')];
+            'hidden_text' => get_string('hidden_text', 'block_featured_links')];
 
         // Puts the tile data into the data array so the values are indexed rather than hashed.
         $data['tile_data'] = array_values($tile_data);
 
-        $this->content->text = $core_renderer->render_from_template('block_totara_featured_links/main', $data);
+        $this->content->text = $core_renderer->render_from_template('block_featured_links/main', $data);
         return $this->content;
     }
 
     /**
-     * Sets up the database row in the block_totara_featured_links table
+     * Sets up the database row in the block_featured_links table
      * @return bool
      */
     public function instance_create() {
         $this->config = new stdClass();
         $this->config->size = 'medium';
-        $this->config->title = get_string('pluginname', 'block_totara_featured_links');
+        $this->config->title = get_string('pluginname', 'block_featured_links');
         $this->config->manual_id = '';
 
         $this->instance_config_commit();
@@ -130,7 +130,7 @@ class block_totara_featured_links extends block_base {
     }
 
     /**
-     * deletes the rows in the database from block_totara_featured_links and block_featured_tiles
+     * deletes the rows in the database from block_featured_links and block_featured_tiles
      * @return bool
      */
     public function instance_delete() {
@@ -172,7 +172,7 @@ class block_totara_featured_links extends block_base {
     public function specialization() {
         if (isset($this->config)) {
             if (empty($this->config->title)) {
-                $this->title = get_string('pluginname', 'block_totara_featured_links');
+                $this->title = get_string('pluginname', 'block_featured_links');
             } else {
                 $this->title = $this->config->title;
             }

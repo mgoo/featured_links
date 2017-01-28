@@ -18,23 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
-namespace block_totara_featured_links\form\validator;
+namespace block_featured_links\form\validator;
 
 defined('MOODLE_INTERNAL') || die();
 
-use block_totara_featured_links\tile\base;
+use block_featured_links\tile\base;
 use ReflectionClass;
 use \totara_form\element_validator;
 
 /**
  * Class is_class_object
  * Validator that makes sure the tile type is a valid tile type not a random class
- * @package block_totara_featured_links\form\validator
+ * @package block_featured_links\form\validator
  */
 class is_class_object extends element_validator {
 
@@ -46,10 +46,10 @@ class is_class_object extends element_validator {
     public function validate () {
         $classname = $this->element->get_data()['type'];
         if (!class_exists($classname)){
-            $this->element->add_error(get_string('invalid_class_name', 'block_totara_featured_links'));
+            $this->element->add_error(get_string('invalid_class_name', 'block_featured_links'));
         }
         if (!is_subclass_of($classname, base::get_class())) {
-            $this->element->add_error(get_string('invalid_class', 'block_totara_featured_links'));
+            $this->element->add_error(get_string('invalid_class', 'block_featured_links'));
         }
     }
 }

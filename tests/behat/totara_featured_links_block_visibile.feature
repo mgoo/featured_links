@@ -1,4 +1,4 @@
-@block @javascript @totara @block_totara_featured_links
+@block @javascript @totara @block_featured_links
 Feature: Check that the visibility options for the tiles work correctly
   The User should be able to hide the tile based on whether other users are in an audience or they match some
   preset rules.

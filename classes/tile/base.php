@@ -18,12 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
-namespace block_totara_featured_links\tile;
+namespace block_featured_links\tile;
 
 use action_menu;
 use action_menu_link_secondary;
@@ -47,7 +47,7 @@ define('BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM', 'custom');
 
 /**
  * Class base
- * @package block_totara_featured_links\tile
+ * @package block_featured_links\tile
  */
 abstract class base{
     /** @var number id of the tile */
@@ -107,7 +107,7 @@ abstract class base{
      * The tile class must be passed
      * The block id must exist
      * @param int $blockinstanceid
-     * @param \block_totara_featured_links\tile\base $tile_class
+     * @param \block_featured_links\tile\base $tile_class
      * @return null
      * @throws \Exception
      * @throws \coding_exception
@@ -120,7 +120,7 @@ abstract class base{
         if (empty($tile_class)) {
             throw new \coding_exception('Please pass the tile class to the parent function');
         }
-        $tile_class->type = '\block_totara_featured_links\tile\default_tile';
+        $tile_class->type = '\block_featured_links\tile\default_tile';
         $tile_class->blockid = $blockinstanceid;
 
         $tile_class->data = new \stdClass();
@@ -233,7 +233,7 @@ abstract class base{
      */
     public function export_for_template($core_renderer, $tile_content){
         global $PAGE;
-        $edit_url = (string)((new \moodle_url('/blocks/totara_featured_links/edit_tile@@replace@@.php',
+        $edit_url = (string)((new \moodle_url('/blocks/featured_links/edit_tile@@replace@@.php',
             ['blockinstanceid' => $this->blockid,
                 'tileid' => $this->id]))->out_as_local_url());
         return [
@@ -290,7 +290,7 @@ abstract class base{
         global $PAGE;
         return [
             'adder' => true,
-            'url' => (string)new \moodle_url('/blocks/totara_featured_links/edit_tile_content.php',
+            'url' => (string)new \moodle_url('/blocks/featured_links/edit_tile_content.php',
                 [
                     'blockinstanceid' => $blockid,
                     'return_url' => $PAGE->url->out_as_local_url()]

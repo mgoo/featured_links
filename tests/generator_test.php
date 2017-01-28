@@ -18,19 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Tests the generator for the totara_featured_links block.
+ * Tests the generator for the featured_links block.
  */
-class block_totara_featured_links_generator_testcase extends advanced_testcase {
+class block_featured_links_generator_testcase extends advanced_testcase {
 
     /**
      * The block generator instance for the test.
-     * @var block_totara_featured_links_generator $generator
+     * @var block_featured_links_generator $generator
      */
     protected $blockgenerator;
 
@@ -39,11 +39,11 @@ class block_totara_featured_links_generator_testcase extends advanced_testcase {
      */
     public function setUp() {
         parent::setUp();
-        $this->blockgenerator = $this->getDataGenerator()->get_plugin_generator('block_totara_featured_links');
+        $this->blockgenerator = $this->getDataGenerator()->get_plugin_generator('block_featured_links');
     }
 
     /**
-     * Tests the \block_totara_featured_links\tile\base::get_tile_class() method.
+     * Tests the \block_featured_links\tile\base::get_tile_class() method.
      *
      * Here we want to test that the generator returns an accurate tile object that matches the real one.
      */
@@ -55,12 +55,12 @@ class block_totara_featured_links_generator_testcase extends advanced_testcase {
         $tile = $this->blockgenerator->create_default_tile($blockinstance->id);
 
         // Test the basic assumptions, return value, it has been inserted and it exists.
-        $this->assertInstanceOf('\block_totara_featured_links\tile\default_tile', $tile); // Check it is a default tile record.
+        $this->assertInstanceOf('\block_featured_links\tile\default_tile', $tile); // Check it is a default tile record.
         $this->assertNotEmpty($tile->id); // Verify the ID has been set, useless without this!
         $this->assertTrue($DB->record_exists('block_featured_tiles', ['id' => $tile->id]));
 
         // Manually get the tile instance so that we can compare the real one with the generator one.
-        $realtile = new \block_totara_featured_links\tile\default_tile($tile->id);
+        $realtile = new \block_featured_links\tile\default_tile($tile->id);
 
         $realtile_reflection = new ReflectionClass($realtile);
         $realtile_properties = [];

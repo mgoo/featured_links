@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
 
-namespace block_totara_featured_links\form\element;
+namespace block_featured_links\form\element;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,7 +34,7 @@ use totara_form\form\element\static_html;
 /**
  * Class audience_list
  * Makes a list that contains audience names and number of members
- * @package block_totara_featured_links\form\element
+ * @package block_featured_links\form\element
  */
 class audience_list extends static_html {
     private $tileid;
@@ -74,7 +74,7 @@ class audience_list extends static_html {
         global $PAGE;
         $renderer = $PAGE->get_renderer('core');
         return $renderer->render_from_template(
-            'block_totara_featured_links/element_audience_list_item',
+            'block_featured_links/element_audience_list_item',
             ['name' => $audience_name,
                 'cohortid' => $cohortid,
                 'num_learners' => $num_learners]
@@ -100,7 +100,7 @@ class audience_list extends static_html {
 //        }
         $renderer = $PAGE->get_renderer('core');
         return $renderer->render_from_template(
-            'block_totara_featured_links/element_audience_list', [
+            'block_featured_links/element_audience_list', [
                 'name' => $this->get_name(),
                 'items' => $items
             ]

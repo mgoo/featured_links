@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
 
-namespace block_totara_featured_links\tile;
+namespace block_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,7 +37,7 @@ require_once("$CFG->libdir/formslib.php");
  * Class base_form_content
  * The base form for the content form
  * Plugin tile types should extend this form
- * @package block_totara_featured_links\tile
+ * @package block_featured_links\tile
  */
 abstract class base_form_content extends \moodleform {
     protected $tile;

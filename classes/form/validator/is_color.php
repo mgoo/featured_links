@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
 
-namespace block_totara_featured_links\form\validator;
+namespace block_featured_links\form\validator;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +35,7 @@ use \totara_form\element_validator;
 /**
  * Class is_color
  * Makes sure the value passed by the color input is a 3 or 6 long hexadecimal string starting with a hash
- * @package block_totara_featured_links\form\validator
+ * @package block_featured_links\form\validator
  */
 class is_color extends element_validator {
 
@@ -47,7 +47,7 @@ class is_color extends element_validator {
     public function validate () {
         if (preg_match('/^#([0-9A-Fa-f]{6})$/', $this->element->get_data()['background_color']) == 0
             && preg_match('/^#([0-9A-Fa-f]{3})$/', $this->element->get_data()['background_color']) == 0) {
-            $this->element->add_error(get_string('color_error', 'block_totara_featured_links'));
+            $this->element->add_error(get_string('color_error', 'block_featured_links'));
         }
     }
 }

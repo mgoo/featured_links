@@ -18,17 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
-namespace block_totara_featured_links\tile;
+namespace block_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
 
-use block_totara_featured_links\form\element\audience_list;
+use block_featured_links\form\element\audience_list;
 use totara_form\form\clientaction\hidden_if;
 use totara_form\form\element\checkbox;
 use totara_form\form\element\checkboxes;
@@ -41,7 +41,7 @@ use totara_form\form\element\static_html;
  * Class base_form_auth
  * This is the base form for the visibility option
  * This is the class that plugin tile types should extend
- * @package block_totara_featured_links\tile
+ * @package block_featured_links\tile
  */
 abstract class base_form_auth extends base_form{
 
@@ -61,24 +61,24 @@ abstract class base_form_auth extends base_form{
         $tileid = $this->get_parameters()['tileid'];
         $blockid  = $this->get_parameters()['blockinstanceid'];
 
-        $group = $this->model->add(new section('group', get_string('auth_edit', 'block_totara_featured_links')));
+        $group = $this->model->add(new section('group', get_string('auth_edit', 'block_featured_links')));
         $group->set_collapsible(false);
 
         $access = $group->add(new radios(
             'access',
-            get_string('access_label', 'block_totara_featured_links'),
-            [BLOCK_TOTARA_FEATURED_LINKS_ACCESS_SHOW => get_string('access_show', 'block_totara_featured_links'),
-                BLOCK_TOTARA_FEATURED_LINKS_ACCESS_HIDE => get_string('access_hide', 'block_totara_featured_links'),
-                BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM => get_string('access_custom', 'block_totara_featured_links')
+            get_string('access_label', 'block_featured_links'),
+            [BLOCK_TOTARA_FEATURED_LINKS_ACCESS_SHOW => get_string('access_show', 'block_featured_links'),
+                BLOCK_TOTARA_FEATURED_LINKS_ACCESS_HIDE => get_string('access_hide', 'block_featured_links'),
+                BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM => get_string('access_custom', 'block_featured_links')
             ]));
 
-        $audience = $this->model->add(new section('audience', get_string('audience_title', 'block_totara_featured_links')));
+        $audience = $this->model->add(new section('audience', get_string('audience_title', 'block_featured_links')));
         $audience->set_collapsible(true);
         $audience->set_expanded(true);
 
         $audience_checkbox = $audience->add(
             new checkbox('audience_showing',
-                get_string('audience_showing', 'block_totara_featured_links')
+                get_string('audience_showing', 'block_featured_links')
             )
         );
 
@@ -89,15 +89,15 @@ abstract class base_form_auth extends base_form{
         $add_audience_button = $audience->add(
             new static_html('add_audience_button',
                 '&nbsp;',
-                '<input type="button" value="'.get_string('audience_add', 'block_totara_featured_links').'" id="add_audience_id">'
+                '<input type="button" value="'.get_string('audience_add', 'block_featured_links').'" id="add_audience_id">'
             )
         );
 
         $audience_aggregation = $audience->add(new radios('audience_aggregation',
-            get_string('audience_aggregation_label', 'block_totara_featured_links'),
+            get_string('audience_aggregation_label', 'block_featured_links'),
             [
-                'any' => get_string('audience_aggregation_any', 'block_totara_featured_links'),
-                'all' => get_string('audience_aggregation_all', 'block_totara_featured_links')
+                'any' => get_string('audience_aggregation_any', 'block_featured_links'),
+                'all' => get_string('audience_aggregation_all', 'block_featured_links')
             ]));
 
         if (has_capability('moodle/cohort:view', \context_block::instance($blockid))) {
@@ -115,33 +115,33 @@ abstract class base_form_auth extends base_form{
                 0;
             $audience->add(new static_html('static',
                 '',
-                str_replace('@@#@@', $num_audience, get_string('audience_hide', 'block_totara_featured_links'))
+                str_replace('@@#@@', $num_audience, get_string('audience_hide', 'block_featured_links'))
             ));
         }
 
-        $presets = $this->model->add(new section('presets', get_string('preset_title', 'block_totara_featured_links')));
+        $presets = $this->model->add(new section('presets', get_string('preset_title', 'block_featured_links')));
         $presets->set_collapsible(true);
         $presets->set_expanded(true);
         $preset_checkbox = $presets->add(
             new checkbox('preset_showing',
                 get_string('preset_showing',
-                    'block_totara_featured_links')
+                    'block_featured_links')
             )
         );
         $preset_checkboxes = $presets->add(new checkboxes('presets_checkboxes',
-            get_string('preset_checkboxes_label', 'block_totara_featured_links'),
+            get_string('preset_checkboxes_label', 'block_featured_links'),
             [
-                'loggedin' => get_string('preset_checkbox_loggedin', 'block_totara_featured_links'),
-                'notloggedin' => get_string('preset_checkbox_notloggedin', 'block_totara_featured_links'),
-                'guest' => get_string('preset_checkbox_guest', 'block_totara_featured_links'),
-                'notguest' => get_string('preset_checkbox_notguest', 'block_totara_featured_links'),
-                'admin' => get_string('preset_checkbox_admin', 'block_totara_featured_links')
+                'loggedin' => get_string('preset_checkbox_loggedin', 'block_featured_links'),
+                'notloggedin' => get_string('preset_checkbox_notloggedin', 'block_featured_links'),
+                'guest' => get_string('preset_checkbox_guest', 'block_featured_links'),
+                'notguest' => get_string('preset_checkbox_notguest', 'block_featured_links'),
+                'admin' => get_string('preset_checkbox_admin', 'block_featured_links')
             ]));
         $preset_aggregation = $presets->add(new radios('preset_aggregation',
-            get_string('preset_aggregation_label', 'block_totara_featured_links'),
+            get_string('preset_aggregation_label', 'block_featured_links'),
             [
-                'any' => get_string('preset_aggregation_any', 'block_totara_featured_links'),
-                'all' => get_string('preset_aggregation_all', 'block_totara_featured_links')
+                'any' => get_string('preset_aggregation_any', 'block_featured_links'),
+                'all' => get_string('preset_aggregation_all', 'block_featured_links')
             ]));
 
         $this->model->add_clientaction(new hidden_if($preset_checkboxes))->is_empty($preset_checkbox);
@@ -151,7 +151,7 @@ abstract class base_form_auth extends base_form{
             $tile_rules = $this->model->add(
                 new section('tile_rules',
                     get_string('tilerules_title',
-                        'block_totara_featured_links')));
+                        'block_featured_links')));
             $tile_rules->set_collapsible(true);
             if (isset($this->model->get_current_data('tile_rules_showing')['tile_rules_showing'])
                 && $this->model->get_current_data('tile_rules_showing')['tile_rules_showing']) {
@@ -160,7 +160,7 @@ abstract class base_form_auth extends base_form{
             $tile_rules_show = $tile_rules->add(
                 new checkbox('tile_rules_showing',
                     get_string('tile_rules_show',
-                        'block_totara_featured_links')
+                        'block_featured_links')
                 )
             );
             $elements = $this->specific_definition($tile_rules);
@@ -173,23 +173,23 @@ abstract class base_form_auth extends base_form{
         $aggregation = $this->model->add(
             new section('aggregation',
                 get_string('aggregation_title',
-                    'block_totara_featured_links')
+                    'block_featured_links')
             )
         );
         $aggregation->set_collapsible(true);
         $aggregation->set_expanded(true);
         $aggregation->add(new radios('overall_aggregation',
-            get_string('aggregation_label', 'block_totara_featured_links'),
+            get_string('aggregation_label', 'block_featured_links'),
             [
-                'any' => get_string('aggregation_any', 'block_totara_featured_links'),
-                'all' => get_string('aggregation_all', 'block_totara_featured_links')
+                'any' => get_string('aggregation_any', 'block_featured_links'),
+                'all' => get_string('aggregation_all', 'block_featured_links')
             ])
         );
 
         $this->model->add_clientaction(new hidden_if($audience))->not_equals($access, BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM);
         $this->model->add_clientaction(new hidden_if($presets))->not_equals($access, BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM);
 
-        $PAGE->requires->js_call_amd('block_totara_featured_links/visibility_form', 'init', [$this->model->get_id_suffix()]);
+        $PAGE->requires->js_call_amd('block_featured_links/visibility_form', 'init', [$this->model->get_id_suffix()]);
 
         parent::definition();
     }
@@ -204,7 +204,7 @@ abstract class base_form_auth extends base_form{
         $tileid = $this->get_parameters()['tileid'];
         $return_url = $this->get_parameters()['return_url'];
         return new \moodle_url(
-            '/blocks/totara_featured_links/edit_tile_auth.php',
+            '/blocks/featured_links/edit_tile_auth.php',
             ['blockinstanceid' => $blockinstanceid, 'tileid' => $tileid, 'return_url' => $return_url]
         );
     }

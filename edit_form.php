@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class block_totara_featured_links_edit_form
+ * Class block_featured_links_edit_form
  * This is the edit form for the block
  */
 class block_featured_links_edit_form extends \block_edit_form{

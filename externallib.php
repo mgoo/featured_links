@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
@@ -30,10 +30,10 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . "/externallib.php");
 
 /**
- * Class block_totara_featured_links_external
+ * Class block_featured_links_external
  * This has the funcitons that will be called by AJAX
  */
-class block_totara_featured_links_external extends external_api{
+class block_featured_links_external extends external_api{
 
     /**
      * remove_tile function will remove a tile from a block from ajax making it so that the whole page doesnt have to be reloaded.
@@ -64,7 +64,7 @@ class block_totara_featured_links_external extends external_api{
 
         // Remove the row form the tiles table.
         $DB->delete_records('block_featured_tiles', ['id' => $tileid]);
-        \block_totara_featured_links\tile\base::squash_ordering($blockid);
+        \block_featured_links\tile\base::squash_ordering($blockid);
         return true;
     }
 
@@ -93,8 +93,8 @@ class block_totara_featured_links_external extends external_api{
      */
     public static function add_audience_list_item($cohortid) {
         self::validate_parameters(self::add_audience_list_item_parameters(), ['cohortid' => $cohortid]);
-        $data = \block_totara_featured_links\form\element\audience_list::get_cohort_data($cohortid);
-        return \block_totara_featured_links\form\element\audience_list::render_row($cohortid, $data['name'], $data['learners']);
+        $data = \block_featured_links\form\element\audience_list::get_cohort_data($cohortid);
+        return \block_featured_links\form\element\audience_list::render_row($cohortid, $data['name'], $data['learners']);
     }
 
     /**

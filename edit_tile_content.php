@@ -18,12 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
-namespace block_totara_featured_links\tile;
+namespace block_featured_links\tile;
 
 require_once('../../config.php');
 
@@ -38,15 +38,15 @@ $type = optional_param('type', null, PARAM_TEXT);
 if (!empty($type)) {
     // Make sure the type passes is a tile type.
     if (!class_exists($type)) {
-        throw new \Exception(get_string('invalid_class_name', 'block_totara_featured_links'));
+        throw new \Exception(get_string('invalid_class_name', 'block_featured_links'));
     }
     if (!is_subclass_of($type, base::get_class())) {
-        throw new \Exception(get_string('invalid_class', 'block_totara_featured_links'));
+        throw new \Exception(get_string('invalid_class', 'block_featured_links'));
     }
 }
 $PAGE->set_url(
     new \moodle_url(
-        '/blocks/totara_featured_links/edit_tile_content.php',
+        '/blocks/featured_links/edit_tile_content.php',
         ['blockinstanceid' => $blockinstanceid, 'tileid' => $tileid, 'return_url' => $return_url]
     )
 );
@@ -54,7 +54,7 @@ $PAGE->set_url(
 $context = \context_block::instance($blockinstanceid, MUST_EXIST);
 $PAGE->set_context($context);
 
-$PAGE->requires->js_call_amd('block_totara_featured_links/form', 'init');
+$PAGE->requires->js_call_amd('block_featured_links/form', 'init');
 
 if (!empty($tileid)) {
     $tile_class = !empty($type) ? new $type($tileid) : base::get_tile_class($tileid);
@@ -66,7 +66,7 @@ if (!empty($tileid)) {
     }
 } else {
     //require_capability('totara/dashboard:manageblocks', $context); //TODO add proper capability
-    $tile_class = !empty($type) ? new $type() : new \block_totara_featured_links\tile\default_tile();
+    $tile_class = !empty($type) ? new $type() : new \block_featured_links\tile\default_tile();
 }
 
 $edit_form = $tile_class->edit_content_form(['blockinstanceid' => $blockinstanceid, 'tileid' => $tileid, 'return_url' => $return_url]);

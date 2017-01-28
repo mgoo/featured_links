@@ -1,5 +1,5 @@
 <?php
-namespace block_totara_featured_links\form\element;
+namespace block_featured_links\form\element;
 
 use HTML_QuickForm_input;
 

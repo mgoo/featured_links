@@ -29,20 +29,20 @@ Feature: Test edit the block config for the featured links block
     And I set the following fields to these values:
       | Title For the Block | Title |
       | Tile Size           | small |
-      | Manual ID           |  a_unique_id_totara_featured_links |
+      | Manual ID           |  a_unique_id_featured_links |
     And I press "Save changes"
     Then I should see "Title"
     And ".block-featured-links-tile-small" "css_element" should exist
-    And "#a_unique_id_totara_featured_links" "css_element" should exist
+    And "#a_unique_id_featured_links" "css_element" should exist
 
   Scenario: Check that canceling doesn't change the contents of the block
     When I configure the "Featured Links" block
     And I set the following fields to these values:
       | Title For the Block | Title |
       | Tile Size           | small |
-      | Manual ID           |  a_unique_id_totara_featured_links |
+      | Manual ID           |  a_unique_id_featured_links |
     And I press "Cancel"
     Then ".block-featured-links-tile-medium" "css_element" should exist
     And I should not see "Title"
     And ".block-featured-links-tile-small" "css_element" should not exist
-    And "#a_unique_id_totara_featured_links" "css_element" should not exist
+    And "#a_unique_id_featured_links" "css_element" should not exist

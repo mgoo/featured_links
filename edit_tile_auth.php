@@ -18,14 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
 
 
 
-namespace block_totara_featured_links\tile;
+namespace block_featured_links\tile;
 
 require_once('../../config.php');
 
@@ -40,7 +40,7 @@ $return_url = optional_param('return_url', null, PARAM_LOCALURL);
 
 $PAGE->set_url(
     new \moodle_url(
-        '/blocks/totara_featured_links/edit_tile_auth.php',
+        '/blocks/featured_links/edit_tile_auth.php',
         ['blockinstanceid' => $blockinstanceid, 'tileid' => $tileid, 'return_url' => $return_url]
     )
 );
@@ -74,9 +74,9 @@ if ($edit_form->is_cancelled()) {
 $edit_form->requirements();
 // Draw page.
 
-$PAGE->requires->strings_for_js(['audience_add'], 'block_totara_featured_links');
+$PAGE->requires->strings_for_js(['audience_add'], 'block_featured_links');
 $PAGE->requires->js_call_amd(
-    'block_totara_featured_links/audience_dialogue',
+    'block_featured_links/audience_dialogue',
     'init',
     ['instancetype' => COHORT_ASSN_ITEMTYPE_FEATURED_LINKS, 'instanceid' => $tileid, 'sesskey' => $USER->sesskey]
 );

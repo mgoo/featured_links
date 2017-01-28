@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
@@ -38,9 +38,9 @@ defined('MOODLE_INTERNAL') || die();
  * @param array $options
  * @return bool
  */
-function block_totara_featured_links_pluginfile($course, $birecord_or_cm, $context, $filearea, $args, $forcedownload, array $options= []) {
+function block_featured_links_pluginfile($course, $birecord_or_cm, $context, $filearea, $args, $forcedownload, array $options= []) {
     $fs = get_file_storage();
-    $fullpath = "/{$context->id}/block_totara_featured_links/$filearea/$args[0]/$args[1]";
+    $fullpath = "/{$context->id}/block_featured_links/$filearea/$args[0]/$args[1]";
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         return false;
     }

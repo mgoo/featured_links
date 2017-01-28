@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  *
  *
  */
@@ -38,7 +38,7 @@ define(['jquery', 'core/ajax', 'core/yui'], function($, ajax, Y){
     var init = function(){
         $('#id_type').change(function(event){
             var promises = ajax.call([{
-                methodname: 'block_totara_featured_links_external_render_form',
+                methodname: 'block_featured_links_external_render_form',
                 args: {
                     tileid: $.urlParam('tileid'),
                     form_type: $(event.target).val(),

@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_totara_featured_links
+ * @package block_featured_links
  */
 
 $capabilities = [
-    'block/totara_featured_links:myaddinstance' => [
+    'block/featured_links:myaddinstance' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
@@ -31,7 +31,7 @@ $capabilities = [
         'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ],
 
-    'block/totara_featured_links:addinstance' => [
+    'block/featured_links:addinstance' => [
         'riskbitmask' => RISK_SPAM | RISK_XSS,
 
         'captype' => 'write',
