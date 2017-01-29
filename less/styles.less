@@ -70,11 +70,12 @@ div.tf_element_input input[type="color"]{
         max-height: 100%;
 
         background: rgba(0, 0, 0, .5);
-        color: @linkColor;
+        color: whitesmoke;
 
         h4 {
-            font-size: @fontSizeSmall;
+            font-size: @fontSizeLarge;
             margin-bottom: @padding-vertical;
+            margin-top: @padding-vertical;
             font-weight: @headingsFontWeight;
         }
         p {
@@ -99,6 +100,10 @@ div.tf_element_input input[type="color"]{
             align-items: center;
 
             z-index: 3;
+
+            img{
+                width: auto;
+            }
 
             .ft-stack-suffix{
                 text-shadow: -1px 0 0 @gray,
