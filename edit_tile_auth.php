@@ -48,38 +48,20 @@ $PAGE->set_url(
 $context = \context_block::instance($blockinstanceid, MUST_EXIST);
 $PAGE->set_context($context);
 
-require_once($CFG->dirroot . '/totara/core/js/lib/setup.php');
-require_once($CFG->dirroot . '/totara/cohort/lib.php');
-local_js([
-    TOTARA_JS_TREEVIEW,
-    TOTARA_JS_UI,
-    TOTARA_JS_DIALOG
-]);
-
 $tile_class = base::get_tile_class($tileid);
 if ($USER->id != $tile_class->userid) {
     require_capability('moodle/site:manageblocks', $context);
 } else {
-    //require_capability('totara/dashboard:manageblocks', $context); // TODO add capabiliuty
+    //require_capability('totara/dashboard:manageblocks', $context); // TODO add capability
 }
 $edit_form = $tile_class->edit_auth_form(['blockinstanceid' => $blockinstanceid, 'tileid' => $tileid, 'return_url' => $return_url]);
 // Saves the data.
 if ($edit_form->is_cancelled()) {
     redirect(new \moodle_url($return_url));
-} else if (($form_data = $edit_form->get_data()) && !$edit_form->is_reloaded()) {
+} else if (($form_data = $edit_form->get_data())) {
     $tile_class->save_visibility($form_data);
     redirect(new \moodle_url($return_url));
 }
-
-$edit_form->requirements();
-// Draw page.
-
-$PAGE->requires->strings_for_js(['audience_add'], 'block_featured_links');
-$PAGE->requires->js_call_amd(
-    'block_featured_links/audience_dialogue',
-    'init',
-    ['instancetype' => COHORT_ASSN_ITEMTYPE_FEATURED_LINKS, 'instanceid' => $tileid, 'sesskey' => $USER->sesskey]
-);
 
 echo $OUTPUT->header();
 echo $edit_form->render();

@@ -70,22 +70,19 @@ if (!empty($tileid)) {
 }
 
 $edit_form = $tile_class->edit_content_form(['blockinstanceid' => $blockinstanceid, 'tileid' => $tileid, 'return_url' => $return_url]);
-// Is AJAX.
+
 if ($form_data = $edit_form->get_data()) { // Saves the data.
     if (empty($tileid)) {
         $tile_class = $type::add_tile($blockinstanceid);
     }
-
-    // Makes a new form from the saved data so that the form object is of the right type for the tile.
     $tile_class->save($form_data);
-
     redirect(new \moodle_url($return_url));
 } else if ($edit_form->is_cancelled()) {
     redirect(new \moodle_url($return_url));
-}// Else canceled.
-// Draw page.
-$edit_form->requirements();
+}
 
+$edit_form->requirements();
+// Draw page.
 echo $OUTPUT->header();
 echo $edit_form->render();
 echo $OUTPUT->footer();

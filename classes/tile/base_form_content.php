@@ -47,6 +47,11 @@ abstract class base_form_content extends \moodleform {
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable);
     }
 
+
+    public function requirements() {
+        
+    }
+
     /**
      * Defines the main part of the form
      * which basically includes ordering and tile type
@@ -54,6 +59,7 @@ abstract class base_form_content extends \moodleform {
     public function definition () {
         global $DB, $CFG;
         $mform = $this->_form;
+        $mform->disable_form_change_checker();
         $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES']['number'] = [$CFG->dirroot.'/blocks/featured_links/classes/form/element/number.php', 'block_featured_links\form\element\number'];
 
         $mform->addElement('header', 'form_header', get_string('content_edit', 'block_featured_links'));

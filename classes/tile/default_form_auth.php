@@ -29,7 +29,6 @@ namespace block_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
 
-use totara_form\form\element\text;
 
 /**
  * Class default_form_auth
@@ -45,14 +44,6 @@ class default_form_auth extends base_form_auth{
      */
     public function has_custom_rules() {
         return false;
-    }
-
-    /**
-     * @param $group
-     * @return array
-     */
-    public function specific_definition($group) {
-        return [];
     }
 
     /**

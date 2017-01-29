@@ -34,15 +34,15 @@ defined('MOODLE_INTERNAL') || die();
 /**
  *
  */
-define('BLOCK_TOTARA_FEATURED_LINKS_ACCESS_SHOW', 'show');
+define('BLOCK_FEATURED_LINKS_ACCESS_SHOW', 'show');
 /**
  *
  */
-define('BLOCK_TOTARA_FEATURED_LINKS_ACCESS_HIDE', 'hide');
+define('BLOCK_FEATURED_LINKS_ACCESS_HIDE', 'hide');
 /**
  *
  */
-define('BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM', 'custom');
+define('BLOCK_FEATURED_LINKS_ACCESS_CUSTOM', 'custom');
 
 
 /**
@@ -136,7 +136,7 @@ abstract class base{
         $order_values = $DB->get_fieldset_select('block_featured_tiles', 'sort', "blockid = $blockinstanceid");
         $tile_class->sort = $order_values ? max($order_values) + 1 : 1; // Sets the minimum position to 1.
 
-        $tile_class->access = BLOCK_TOTARA_FEATURED_LINKS_ACCESS_SHOW;
+        $tile_class->access = BLOCK_FEATURED_LINKS_ACCESS_SHOW;
         $tile_class->set_default_visibility();
 
         $tile_class->custom_add();
@@ -258,7 +258,7 @@ abstract class base{
                                 $edit_url.'&return_url='.$PAGE->url->out_as_local_url()
                             )
                         ),
-                        new \pix_icon('edit', 'edit_alt_text', 'moodle', ['class' => 'iconsmall', 'title' => '']),
+                        new \pix_icon('i/edit', 'edit_alt_text', 'moodle', ['class' => 'iconsmall', 'title' => '']),
                         'Content',
                         ['type' => 'edit']),
                     new action_menu_link_secondary(
@@ -268,12 +268,12 @@ abstract class base{
                                 '_auth', $edit_url.'&return_url='.$PAGE->url->out_as_local_url()
                             )
                         ),
-                        new \pix_icon('hide', 'hide_alt_text', 'moodle',  ['class' => 'iconsmall', 'title' => '']),
+                        new \pix_icon('i/hide', 'hide_alt_text', 'moodle',  ['class' => 'iconsmall', 'title' => '']),
                         'Visibility',
                         ['type' => 'edit_vis']),
                     new action_menu_link_secondary(
                         new \moodle_url(''),
-                        new \pix_icon('delete', 'delete_alt_text', 'moodle',  ['class' => 'iconsmall', 'title' => '']),
+                        new \pix_icon('i/delete', 'delete_alt_text', 'moodle',  ['class' => 'iconsmall', 'title' => '']),
                         'Delete',
                         ['type' => 'remove', 'blockid' => $this->blockid, 'tileid' => $this->id])
                 ])
@@ -358,23 +358,16 @@ abstract class base{
 
     /**
      * This gets the default data to pass to the auth form
-     * @return array
+     * @return \stdClass
      */
     public function get_auth_form_data() {
-        $data = [
-            'access' => $this->access,
-            'audiences_visible' => $this->audiences_raw,
-            'audience_aggregation' => $this->audience_aggregation,
-            'preset_aggregation' => $this->presets_aggregation,
-            'presets_checkboxes' => $this->presets,
-            'overall_aggregation' => $this->overall_aggregation,
-            'audience_showing' => $this->audience_showing,
-            'preset_showing' => $this->preset_showing,
-            'tile_rules_showing' => $this->tile_rules_showing
-        ];
-        if (isset($data['presets_checkboxes'][0]) && $data['presets_checkboxes'][0] == '') {
-            unset($data['presets_checkboxes']);
-        }
+        $data = new \stdClass();
+        $data->access = $this->access;
+        $data->preset_aggregation = $this->presets_aggregation;
+        $data->presets_checkboxes = $this->presets;
+        $data->overall_aggregation = $this->overall_aggregation;
+        $data->preset_showing = $this->preset_showing;
+        $data->tile_rules_showing = $this->tile_rules_showing;
         return $data;
     }
 
@@ -387,11 +380,11 @@ abstract class base{
         if (!isset($this->access)) {
             return true;
         }
-        if ($this->access == BLOCK_TOTARA_FEATURED_LINKS_ACCESS_SHOW) {
+        if ($this->access == BLOCK_FEATURED_LINKS_ACCESS_SHOW) {
             return true;
-        } else if ($this->access == BLOCK_TOTARA_FEATURED_LINKS_ACCESS_HIDE) {
+        } else if ($this->access == BLOCK_FEATURED_LINKS_ACCESS_HIDE) {
             return false;
-        } else if ($this->access == BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM) {
+        } else if ($this->access == BLOCK_FEATURED_LINKS_ACCESS_CUSTOM) {
             $matches = 0;
             $restrictions = 0;
             // Presets.
@@ -443,34 +436,6 @@ abstract class base{
                     if ($preset_restrictions > 0) {
                         $restrictions++;
                     } else if ($preset_matches > 0) {
-                        $matches++;
-                    }
-                }
-            }
-            // Audiences.
-            if ($this->audience_showing) {
-                $audience_matches = 0;
-                $audience_restrictions = 0;
-                foreach ($this->audiences as $audience) {
-                    if ($audience == '') {
-                        continue;
-                    }
-                    if (in_array($audience, totara_cohort_get_user_cohorts($USER->id)) > 0) {
-                        $audience_matches++;
-                    } else {
-                        $audience_restrictions++;
-                    }
-                }
-                if ($this->audience_aggregation == 'any') {
-                    if ($audience_matches > 0) {
-                        $matches++;
-                    } else if ($audience_restrictions > 0) {
-                        $restrictions++;
-                    }
-                } else if ($this->audience_aggregation == 'all') {
-                    if ($audience_restrictions > 0) {
-                        $restrictions++;
-                    } else if ($audience_matches > 0) {
                         $matches++;
                     }
                 }
@@ -581,10 +546,10 @@ abstract class base{
      */
     final public function save_visibility($data) {
         global $DB;
-        $this->access = !isset($data->access) ? BLOCK_TOTARA_FEATURED_LINKS_ACCESS_SHOW : $data->access;
+        $this->access = !isset($data->access) ? BLOCK_FEATURED_LINKS_ACCESS_SHOW : $data->access;
 
         // Remove Values if its not custom.
-        if ($data->access != BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM) {
+        if ($data->access != BLOCK_FEATURED_LINKS_ACCESS_CUSTOM) {
             $this->set_default_visibility();
         } else {
             $this->audience_aggregation = !isset($data->audience_aggregation) ? 'any' : $data->audience_aggregation;
@@ -596,41 +561,6 @@ abstract class base{
             $this->preset_showing = !isset($data->preset_showing) ? 0 : $data->preset_showing;
             $this->tile_rules_showing = !isset($data->tile_rules_showing) ? 0 : $data->tile_rules_showing;
         }
-
-        // Update the Cohort Visibility table.
-//        $res = $DB->get_records(
-//            'cohort_visibility',
-//            ['instanceid' => $this->id, 'instancetype' => COHORT_ASSN_ITEMTYPE_FEATURED_LINKS]
-//        );
-//        foreach ($res as $audience) {
-//            if ($data->access != BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM
-//                || !in_array($audience->cohortid, explode(',', $data->audiences_visible))) {
-//                $DB->delete_records('cohort_visibility',
-//                    ['instanceid' => $this->id,
-//                        'instancetype' => COHORT_ASSN_ITEMTYPE_FEATURED_LINKS,
-//                        'cohortid' => $audience->cohortid
-//                    ]
-//                );
-//            }
-//        }
-//        if ($this->access == BLOCK_TOTARA_FEATURED_LINKS_ACCESS_CUSTOM && $this->audience_showing) {
-//            foreach (explode(',', $data->audiences_visible) as $audience_id) {
-//                if (in_array($audience_id, explode(',', $this->audiences_raw)) || $audience_id == '') {
-//                    continue;
-//                }
-//                global $USER;
-//                $save_data = new \stdClass();
-//                $save_data->cohortid = $audience_id;
-//                $save_data->instanceid = $this->id;
-//                $save_data->instancetype = COHORT_ASSN_ITEMTYPE_FEATURED_LINKS;
-//                $save_data->timemodified = time();
-//                $save_data->timecreated = time();
-//                $save_data->usermodified = $USER->id;
-//                $DB->insert_record('cohort_visibility', $save_data);
-//            }
-//        }
-//        unset($this->audiences_raw);
-//        unset($this->audiences);
 
         $this->timemodified = time();
 

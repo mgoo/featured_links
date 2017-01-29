@@ -134,7 +134,9 @@ class default_tile extends base{
         if ($this->id != $parameters['tileid']) {
             throw new \Exception('The tileid passed and the tile id of the object do not match');
         }
-        return new default_form_auth($this->get_auth_form_data(), $parameters);
+        $form = new default_form_auth($this, new \moodle_url('edit_tile_auth.php', $parameters));
+        $form->set_data($this->get_auth_form_data());
+        return $form;
     }
 
     /**
