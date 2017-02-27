@@ -1,7 +1,7 @@
 /*
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
 define([
     'jquery',
     'core/ajax',
-    'core/templates',
-    'block_featured_links/visibility_form',
+    'block_totara_featured_links/visibility_form',
     'core/str',
     'core/config'
-], function ($, ajax, templates, vis_form, mdlstr, config){
+], function ($, ajax, vis_form, mdlstr, config){
 
     var tileid = '';
     var config_dialog = {};
@@ -50,7 +47,7 @@ define([
         totaraDialog_handler_restrictcohorts.prototype = new totaraDialog_handler_treeview_multiselect();
 
         totaraDialog_handler_restrictcohorts.prototype.every_load = function(){
-            $('#audience_visible_table [cohortid]').each(function(){
+            $('#audience_visible_table').find('[cohortid]').each(function(){
                 var cohortid = $(this).attr('cohortid');
                 ehandler._toggle_items('item_' + cohortid, false);
             });
@@ -84,7 +81,7 @@ define([
         );
 
         /**
-         * Add a row to a list on the visiblity form page
+         * Add a row to a list on the visibility form page
          * Also hides the dialog and any no item notice
          * @return void
          */
@@ -103,8 +100,9 @@ define([
 
                 var promises = ajax.call([
                     {
-                        methodname: 'block_featured_links_external_add_audience_list_item', args: {
-                        cohortid: itemid
+                        methodname: 'block_totara_featured_links_external_add_audience_list_item',
+                        args: {
+                            audienceid: itemid
                         }
                     }
                 ]);
@@ -127,7 +125,7 @@ define([
             var required_strings = [];
             required_strings.push({key: 'ok', component: 'moodle'});
             required_strings.push({key: 'cancel', component: 'moodle'});
-            required_strings.push({key: 'audience_add', component: 'block_featured_links'});
+            required_strings.push({key: 'audience_add', component: 'block_totara_featured_links'});
 
             mdlstr.get_strings(required_strings).done(function(string_results){
                 strings = {

@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,78 +18,77 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
-
-
-namespace block_featured_links\tile;
+namespace block_totara_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
 
-//use \core\mmoodleform;
-global $CFG;
-require_once("$CFG->libdir/formslib.php");
+use \totara_form\form\element\select;
+use \totara_form\form\element\number;
+use \totara_form\form\group\section;
+use \block_totara_featured_links\form\validator\is_subclass_of_tile_base;
 
 /**
  * Class base_form_content
  * The base form for the content form
  * Plugin tile types should extend this form
- * @package block_featured_links\tile
+ * @package block_totara_featured_links\tile
  */
-abstract class base_form_content extends \moodleform {
-    protected $tile;
-
-    public function __construct($tile, $action = null, $customdata = null, $method = 'post', $target = '', $attributes = null, $editable = true) {
-        $this->tile = $tile;
-        parent::__construct($action, $customdata, $method, $target, $attributes, $editable);
-    }
-
-
-    public function requirements() {
-        
-    }
+abstract class base_form_content extends base_form {
 
     /**
      * Defines the main part of the form
      * which basically includes ordering and tile type
      */
     public function definition () {
-        global $DB, $CFG;
-        $mform = $this->_form;
-        $mform->disable_form_change_checker();
-        $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES']['number'] = [$CFG->dirroot.'/blocks/featured_links/classes/form/element/number.php', 'block_featured_links\form\element\number'];
+        global $DB;
 
-        $mform->addElement('header', 'form_header', get_string('content_edit', 'block_featured_links'));
+        $group = $this->model->add(new section('group', get_string('content_edit', 'block_totara_featured_links')));
+        $group->set_collapsible(false);
 
-        $classes_arr = \block_featured_links\lib\class_component::get_namespace_classes('tile', 'block_featured_links\tile\base');
-        $classes  = [];
-        foreach($classes_arr as $class){
-            if(is_subclass_of($class, base::get_class())){
-                $classes[] = $class;
-            }
-        }
-
+        $classes = \core_component::get_namespace_classes('tile', 'block_totara_featured_links\tile\base');
         $class_options = [];
-        foreach ($classes as $class) {
-            $class_options["\\" . $class] = $class::get_name();
+        foreach ($classes as $class_str) {
+            $class_arr = explode('\\', $class_str);
+            $plugin_name = $class_arr[0];
+            $class_name = $class_arr[count($class_arr) - 1];
+            $class_options[$plugin_name.'-'.$class_name] = $class_str::get_name();
         }
 
-        $mform->addElement('select', 'type', get_string('tile_types', 'block_featured_links'), $class_options);
+        $tile_types = $this->model->add(new select('type', get_string('tile_types', 'block_totara_featured_links'), $class_options));
+        $tile_types->add_validator(new is_subclass_of_tile_base());
 
-        $this->specific_definition($mform);
+        $this->specific_definition($group);
 
-        $max = $DB->count_records('block_featured_tiles', ['blockid' => $this->_customdata->blockid]);
-        if ($DB->count_records('block_featured_tiles', ['id' => $this->tile->id]) == 0) {
+        $position = $this->model->add(new number('sortorder', get_string('tile_position', 'block_totara_featured_links')));
+        $max = $DB->count_records('block_totara_featured_links_tiles', ['blockid' => $this->get_parameters()['blockinstanceid']]);
+        if ($DB->count_records('block_totara_featured_links_tiles', ['id' => $this->get_parameters()['tileid']]) == 0) {
             $max++;
         }
-        $mform->addElement('number', 'sort', get_string('tile_position', 'block_featured_links'), ['type' => 'number', 'max' => ($max == 0 ? 1 : $max), 'min' => 1]);
-        $mform->addRule('sort', get_string('error'), 'numeric');
-        $mform->addRule('sort', get_string('error'), 'required', true);
-        $mform->setType('sort', PARAM_INT);
+        $position->set_attribute('max', max(1, $max));
+        $position->set_attribute('min', 1);
+        $position->set_attribute('required', true);
+        parent::definition();
+    }
 
-        $this->add_action_buttons();
+    /**
+     * Overrides the get_action_url function so that the parameters can be added to the form even when its being submitted.
+     * Needed as the php script requires that the block and tile ids are set
+     * @return \moodle_url
+     */
+    public function get_action_url () {
+        return new \moodle_url(
+            '/blocks/totara_featured_links/edit_tile_content.php',
+            $this->get_parameters()
+        );
+    }
+
+    /**
+     * Gets the requirements for the form
+     */
+    public function requirements () {
+        parent::requirements();
     }
 }

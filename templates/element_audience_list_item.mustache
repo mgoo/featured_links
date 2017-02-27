@@ -17,11 +17,11 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    @author Andrew McGhie <andrew.mcghie@totaralearning.com>
-   @package block_featured_links
+   @package block_totara_featured_links
 }}
 {{!
 
-    @template block_featured_links/element_audience_list_item
+    @template block_totara_featured_links/element_audience_list_item
 
     This template generates an item to be used in the element_audience_list list.
 
@@ -36,7 +36,6 @@
      * cohortid int the id of the audience
      * num_learners int the number of learners in the audience
 
-
     Other context variables for following partials:
      * none
 
@@ -50,6 +49,8 @@
 <li>
     {{name}}
     <a title="Delete" class="coursecohortdeletelink" href="#" data-type="cohort_delete" cohortid="{{cohortid}}">
-        {{#flex_icon}}delete, {"alt":"{{#str}}delete,moodle{{/str}}"}{{/flex_icon}}</a>
+        {{#flex_icon}}delete, {"alt":"{{#str}}delete,moodle{{/str}}"}{{/flex_icon}}
+        <span class="sr-only">{{#str}}delete_audience_rule, block_totara_featured_links, {{name}}{{/str}}</span>
+    </a>
     (#{{num_learners}})
 </li>

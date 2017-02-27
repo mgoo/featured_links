@@ -1,7 +1,7 @@
 /*
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
+
+/*
+ * How to upgrade
+ * # wrapping in amd module
+ *      This works a a jquery plugin so define jquery as $ then return $ at the bottom like 'return {spectrum: $};'
+ * # string
+ *      In the initialize function get the stringw required 'cancel:moodle' && 'choose:moodle'
+ *      Then when they return set the text of cancelButton and chooseButton to those values
+ * # default options
+ *      set the value of defaultOpts.showInput to true this can be done in the definition of defaultOpts
+ *      This make the hex input visible
+ */
+
 // Spectrum Colorpicker v1.8.0
 // https://github.com/bgrins/spectrum
 // Author: Brian Grinstead
@@ -40,7 +51,7 @@ define(['jquery', 'core/str'], function($, mdlstr){
         // Options
         color: false,
         flat: false,
-        showInput: false,
+        showInput: true,
         allowEmpty: false,
         showButtons: true,
         clickoutFiresChange: true,
@@ -139,8 +150,6 @@ define(['jquery', 'core/str'], function($, mdlstr){
             "</div>"
         ].join("");
     })();
-
-
 
 
     function paletteTemplate (p, color, className, opts) {
@@ -1560,7 +1569,6 @@ define(['jquery', 'core/str'], function($, mdlstr){
         };
     }
 
-
     // Conversion Functions
     // --------------------
 
@@ -1747,7 +1755,6 @@ define(['jquery', 'core/str'], function($, mdlstr){
         });
     };
 
-
     // Modification Functions
     // ----------------------
     // Thanks to less.js for some of the basics here
@@ -1914,7 +1921,6 @@ define(['jquery', 'core/str'], function($, mdlstr){
         return tinycolor(rgba);
     };
 
-
     // Readability Functions
     // ---------------------
     // <http://www.w3.org/TR/AERT#color-contrast>
@@ -1980,7 +1986,6 @@ define(['jquery', 'core/str'], function($, mdlstr){
         }
         return bestColor;
     };
-
 
     // Big List of Colors
     // ------------------
@@ -2139,7 +2144,6 @@ define(['jquery', 'core/str'], function($, mdlstr){
 
     // Make it easy to access colors via `hexNames[hex]`
     var hexNames = tinycolor.hexNames = flip(names);
-
 
     // Utilities
     // ---------

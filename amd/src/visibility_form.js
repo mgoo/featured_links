@@ -1,7 +1,7 @@
 /*
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
 define(['jquery'], function($) {
@@ -28,6 +26,7 @@ define(['jquery'], function($) {
         'preset_showing',
         'tile_rules_showing'
     ];
+    var form_id_suffix;
 
     var check_aggregation = function(id_suffix){
         var num = 0;
@@ -36,6 +35,9 @@ define(['jquery'], function($) {
                 num++;
             }
         });
+        if (!$('#tfiid_audience_showing_' + id_suffix).length ){
+            num++;
+        }
         if (num >= 2) {
             $('[data-element-id="tfiid_aggregation' + id_suffix + '"]').each(function(index, value){
                 $(value).removeAttr('data-hidden');
@@ -67,13 +69,14 @@ define(['jquery'], function($) {
 
     return {
         init: function (id_suffix) {
+            form_id_suffix = id_suffix;
             $.each(checkboxes, function(index, value){
                 $('#tfiid_' + value + '_' + id_suffix).on('change', function(){
                     check_aggregation(id_suffix);
                 });
             });
-            $('#tfiid_access_' + id_suffix).on('change', function(){
-                if ($('input[name=access]:checked', '#tfiid_access_' + id_suffix).val() != 'custom'){
+            $('#tfiid_visibility_' + id_suffix).on('change', function(){
+                if ($('input[name=visibility]:checked', '#tfiid_visibility_' + id_suffix).val() != '2'){
                     $('[data-element-id="tfiid_aggregation' + id_suffix + '"]').each(function(index, value){
                         $(value).attr('data-hidden', '');
                     });
@@ -83,7 +86,7 @@ define(['jquery'], function($) {
                 }
             });
             add_audience_table_listeners();
-            if ($('input[name=access]:checked', '#tfiid_access_' + id_suffix).val() != 'custom'){
+            if ($('input[name=visibility]:checked', '#tfiid_visibility_' + id_suffix).val() != '2'){
                 $('[data-element-id="tfiid_aggregation' + id_suffix + '"]').each(function(index, value){
                     $(value).attr('data-hidden', '');
                 });

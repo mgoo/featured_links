@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
-$plugin->component = 'block_featured_links';
-$plugin->version = 2017012601; // Version of the block YYYYMMDDHH.
-$plugin->requires = 2015111607; // Version of moodle the bloc requires YYYYMMDDHH.
+$plugin->component = 'block_totara_featured_links';
+$plugin->version = 2017022406; // Version of the block YYYYMMDDHH.
+$plugin->requires = 2015111607; // Version of moodle the block requires YYYYMMDDHH.

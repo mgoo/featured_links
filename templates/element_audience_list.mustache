@@ -17,11 +17,11 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    @author Andrew McGhie <andrew.mcghie@totaralearning.com>
-   @package block_featured_links
+   @package block_totara_featured_links
 }}
 {{!
 
-    @template block_featured_links/element_audience_list
+    @template block_totara_featured_links/element_audience_list
 
     This template generates Featured Links list that holds the audiences that can see the tile in the visibility form.
 
@@ -33,8 +33,7 @@
 
     Context variables required for this template:
      * name string name of this item
-     * items array a array of html code for the items in the list
-
+     * items array a array of data for rendering items in the list
 
     Other context variables for following partials:
      * none
@@ -43,14 +42,14 @@
       {
         "name": "examplename",
         "items": [
-            "<li>the html stuff</li>",
-            "<li>some more html</li>"
+            {"name": "name_of_the_cohort", "num_learners": 2, "cohortid": 3},
+            {"name": "example", "num_learners": 1, "cohortid": 4}
         ]
       }
 }}
 
 <ul id="{{name}}" class="unlist">
     {{#items}}
-        {{{.}}}
+        {{> block_totara_featured_links/element_audience_list_item}}
     {{/items}}
 </ul>

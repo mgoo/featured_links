@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
-
-
-namespace block_featured_links\form\validator;
+namespace block_totara_featured_links\form\validator;
 
 defined('MOODLE_INTERNAL') || die();
 
 use \totara_form\element_validator;
 
-
 /**
  * Class is_color
  * Makes sure the value passed by the color input is a 3 or 6 long hexadecimal string starting with a hash
- * @package block_featured_links\form\validator
+ * @package block_totara_featured_links\form\validator
  */
 class is_color extends element_validator {
 
@@ -45,9 +40,8 @@ class is_color extends element_validator {
      * @return void adds errors to element
      */
     public function validate () {
-        if (preg_match('/^#([0-9A-Fa-f]{6})$/', $this->element->get_data()['background_color']) == 0
-            && preg_match('/^#([0-9A-Fa-f]{3})$/', $this->element->get_data()['background_color']) == 0) {
-            $this->element->add_error(get_string('color_error', 'block_featured_links'));
+        if (preg_match('/^#([0-9a-fA-F]{3}){1,2}$/', $this->element->get_data()['background_color']) == 0) {
+            $this->element->add_error(get_string('color_error', 'block_totara_featured_links'));
         }
     }
 }

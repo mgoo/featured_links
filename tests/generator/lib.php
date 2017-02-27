@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
+ * @package block_totara_featured_links
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -26,17 +26,46 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Totara featured links block generator class.
  */
-class block_featured_links_generator extends testing_block_generator {
+class block_totara_featured_links_generator extends testing_block_generator {
 
     /**
      * Creates a new default tile.
      *
      * @param int $blockinstanceid
-     * @return \block_featured_links\tile\default_tile
+     * @return \block_totara_featured_links\tile\default_tile
      */
     public function create_default_tile($blockinstanceid) {
-        $tile = \block_featured_links\tile\default_tile::add_tile($blockinstanceid);
+        $tile = \block_totara_featured_links\tile\default_tile::add($blockinstanceid);
         return $tile;
     }
 
+    /**
+     * Creates a new course tile
+     * @param int $blockinstanceid
+     * @return \block_totara_featured_links\tile\course_tile
+     */
+    public function create_course_tile($blockinstanceid) {
+        $tile = \block_totara_featured_links\tile\course_tile::add($blockinstanceid);
+        return $tile;
+    }
+
+    /**
+     * Created a new multi image
+     * @param int $blockinstanceid
+     * @return \block_totara_featured_links\tile\gallery_tile
+     */
+    public function create_gallery_tile($blockinstanceid) {
+        $tile = \block_totara_featured_links\tile\gallery_tile::add($blockinstanceid);
+        return $tile;
+    }
+
+    /**
+     * @param int $blockinstanceid
+     * @param string $type
+     * @return \block_totara_featured_links\tile\base
+     */
+    public function create_tile($blockinstanceid, $type) {
+        $tile = $type::add($blockinstanceid);
+        return $tile;
+    }
 }

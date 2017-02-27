@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
-namespace block_featured_links\form\validator;
-
+namespace block_totara_featured_links\form\validator;
 
 use totara_form\element_validator;
-
 
 /**
  * Class alt_text_required
  * A validator that checks if the default_content_form should have an alt text
- * @package block_featured_links\form\validator
+ * @package block_totara_featured_links\form\validator
  */
 class alt_text_required extends element_validator {
+    protected $img_input = '';
+
+    public function __construct ($message = null, $img_input = '') {
+        parent::__construct($message);
+        if ($img_input == '') {
+            throw new \coding_exception("Please pass the name of the image upload input to the validator");
+        }
+        $this->img_input = $img_input;
+    }
 
     /**
      * Will return an error if there is not heading, textbody, alt_text but there is an image.
@@ -44,11 +49,11 @@ class alt_text_required extends element_validator {
         $title = $data['heading'];
         $description = $data['textbody'];
         $alt_text = $this->element->get_data()['alt_text'];
-        if (isset($this->element->get_model()->get_files()['background_img'][0])
+        if (isset($this->element->get_model()->get_files()[$this->img_input][0])
             && (!isset($title) || $title == '')
             && (!isset($description) || $description == '')
             && (!isset($alt_text) || $alt_text == '')) {
-            $this->element->add_error(get_string('requires_alt_text', 'block_featured_links'));
+            $this->element->add_error(get_string('requires_alt_text', 'block_totara_featured_links'));
         }
     }
 }

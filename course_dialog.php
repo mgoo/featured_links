@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
+require_once('../../config.php');
+require_once($CFG->dirroot.'/totara/core/dialogs/dialog_content_courses.class.php');
+require_once($CFG->dirroot.'/totara/core/js/lib/setup.php');
 
+$parentid = optional_param('parentid', 'cat0', PARAM_ALPHANUM);
+preg_match('/([0-9]+)$/', $parentid, $matches);
+$parentid = $matches[0];
 
-namespace block_featured_links\tile;
+require_login();
 
-defined('MOODLE_INTERNAL') || die();
+$PAGE->set_context(context_system::instance());
 
-
-/**
- * Class default_form_auth
- * This is the visibility form for the default tile type
- * You can use this as an example for other tile types
- * @package block_featured_links\tile
- */
-class default_form_auth extends base_form_auth{
-
-    /**
-     * The default tile does not define any custom visibility rules for the tile
-     * @return bool
-     */
-    public function has_custom_rules() {
-        return false;
-    }
-
-    /**
-     * This will get an java script requirements for the form.
-     * The default form does not have any.
-     */
-    public function requirements() {
-
-    }
-}
+// Load dialog content generator.
+$dialog = new totara_dialog_content_courses($parentid);
+$dialog->searchtype = 'course';
+$dialog->load_courses(true);
+$dialog->customdata['instanceid'] = $parentid;
+// Display page.
+echo $dialog->generate_markup();

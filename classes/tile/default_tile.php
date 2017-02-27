@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,240 +18,240 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
-
-
-namespace block_featured_links\tile;
+namespace block_totara_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
+
+use \totara_form\file_area;
 
 /**
  * This is the base class for the default tile it can be an example of how to do this in the tile mods
  * Class default_tile
- * @package block_featured_links\tile
+ * @package block_totara_featured_links\tile
  */
 class default_tile extends base{
-    const FILE_NAME = 'background_img';
-    const USED_FIELDS = ['heading', 'textbody', 'url', 'background_color', 'background_img', 'alt_text'];
-    protected $CLASS_NAME = '\block_featured_links\tile\default_tile';
-
-
-    /**
-     * Uses the self::USED_FIELDS to filter the data that has being pulled from the database
-     */
-    public function filter_values () {
-        $data_filtered = new \stdClass();
-        foreach ($this->data as $key => $datum) {
-            if (in_array($key, self::USED_FIELDS)) {
-                $data_filtered->$key = $this->data->$key;
-            }
-        }
-        return $data_filtered;
-    }
+    protected $used_fields = ['heading', // string The title for the tile.
+        'textbody', // string The description for the tile.
+        'url', // string The url that the tile links to.
+        'background_color', // string The hex value of the background color.
+        'background_img', // string The filename  for the background image.
+        'alt_text', // string The text to go in the sr-only span in the anchor tag.
+        'target', // string The target for the link either '_self' or '_blank'.
+        'heading_location']; // string The location of the heading either 'top' or 'bottom'.
+    protected $content_class = 'block-totara-featured-links-content';
+    protected $content_template = 'block_totara_featured_links/content';
 
     /**
-     * returns the name of the tile that will be displayed
-     * @return string
+     * {@inheritdoc}
      */
     public static function get_name() {
-        return get_string('default_name', 'block_featured_links');
+        return get_string('default_name', 'block_totara_featured_links');
     }
 
     /**
-     * Adds a default tile to the database
-     * Returns the object that it made
-     * @param int $blockinstanceid
-     * @return default_tile $tile_class
+     * {@inheritdoc}
      */
-    public static function add_tile($blockinstanceid, $tile_class = null) {
-        $tile_class = new self();
-        return parent::add_tile($blockinstanceid, $tile_class);
+    public function add_tile() {
+
     }
 
     /**
-     * instantiates the background_img array so php doesn't complain later
-     * @param $tile_class
-     * @return null|void
+     * {@inheritdoc}
      */
-    public function custom_add () {
-        $this->data->background_img = [];
+    public function copy_files(&$new_tile) {
+        if (empty($this->data->background_img)) {
+            return;
+        }
+        $fromcontext = \context_block::instance($this->blockid);
+        $tocontext = \context_block::instance($new_tile->blockid);
+        $fs = get_file_storage();
+        // This extra check if file area is empty adds one query if it is not empty but saves several if it is.
+        if (!$fs->is_area_empty($fromcontext->id, 'block_totara_featured_links', 'tile_background', $this->id, false)) {
+            file_prepare_draft_area($draftitemid,
+                $fromcontext->id,
+                'block_totara_featured_links',
+                'tile_background',
+                $this->id,
+                ['subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1]);
+            file_save_draft_area_files($draftitemid,
+                $tocontext->id,
+                'block_totara_featured_links',
+                'tile_background',
+                $new_tile->id,
+                ['subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1]);
+        }
     }
 
     /**
-     * returns the class of the edit for that the tile uses
-     * @param array['blockinstanceid' => int, 'tileid' => int] $parameters
-     * @return \moodleform mixed
+     * Gets the data for the content form and loads the background image back into the draft area so its displayed
+     * in the filemanager
+     * @return \stdClass
      */
-    public function edit_content_form($parameters) {
-        global $DB;
-        if (!$DB->record_exists('block_instances', ['id' => $parameters['blockinstanceid']])) {
-            throw new \Exception('The block for the tile was not found');
+    public function get_content_form_data() {
+        $data_obj = parent::get_content_form_data();
+        // Move background file to the draft area.
+        if (isset($this->data->background_img)) {
+            $data_obj->background_img = new file_area(\context_block::instance($this->blockid),
+                'block_totara_featured_links',
+                'tile_background',
+                $this->id);
         }
-        if ($this->id != $parameters['tileid']) {
-            throw new \Exception('The tileid passed and the tile id of the object do not match');
-        }
-        if ($DB->record_exists('block_featured_tiles', ['id' => $this->id])) {
-            $data_obj = $this->data_filtered;
-
-            // Add specific values to the array.
-            $data_obj->sort = $this->sort;
-            $data_obj->type = $this->type;
-
-            // Move background file to the draft area.
-            if (isset($this->data->background_img->itemid)) {
-                $draftitemid = $this->data->background_img->itemid;
-                $data_obj->background_img = $draftitemid;
-            }
-        } else { // Is new tile.
-            $data_obj = new \stdClass();
-            $data_obj->sort = self::get_next_sortorder($parameters['blockinstanceid']);
-        }
-        $data_obj->type = $this->CLASS_NAME;
-        $parameters['type'] = $this->CLASS_NAME;
-        $data_obj->blockid = $parameters['blockinstanceid'];
-        $form = new default_form_content($this, new \moodle_url('edit_tile_content.php', $parameters), $data_obj);
-        $form->set_data($data_obj);
-        return $form;
+        return $data_obj;
     }
 
     /**
-     * returns the class of the visibility form
-     * @param array['blockinstanceid' => int, 'tileid' => int] $parameters
-     * @return default_form_auth
+     * {@inheritdoc}
      */
-    public function edit_auth_form($parameters) {
-        global $DB;
-        if (!$DB->record_exists('block_instances', ['id' => $parameters['blockinstanceid']])) {
-            throw new \Exception('The block for the tile was not found');
+    protected function get_content_template_data() {
+        $notempty = false;
+        if (!empty($this->data_filtered->heading) || !empty($this->data_filtered->textbody)) {
+            $notempty = true;
         }
-        if (!$DB->record_exists('block_featured_tiles', ['id' => $parameters['tileid']])) {
-            throw new \Exception('The tile was not found');
-        }
-        if ($this->id != $parameters['tileid']) {
-            throw new \Exception('The tileid passed and the tile id of the object do not match');
-        }
-        $form = new default_form_auth($this, new \moodle_url('edit_tile_auth.php', $parameters));
-        $form->set_data($this->get_auth_form_data());
-        return $form;
+        return ['heading' => (empty($this->data_filtered->heading) ? '' : $this->data->heading),
+            'textbody' => (empty($this->data_filtered->textbody) ? '' : $this->data->textbody),
+            'content_class' => (empty($this->content_class) ? '' : $this->content_class),
+            'heading_location' => (empty($this->data_filtered->heading_location) ? '' : $this->data_filtered->heading_location),
+            'notempty' => $notempty
+        ];
     }
 
     /**
-     * renders the tile contents
-     * should return a string of HTML
-     * the div wrappers and buttons are added in the get_content class so they cannot be overridden
+     * Adds the data needed for the default tile type
      * @param \core_renderer $renderer
-     * @return string
-     */
-    public function render_content(\core_renderer $renderer) {
-        $data = $this->get_template_data();
-        $html_data = $renderer->render_from_template('block_featured_links/content', $data);
-        return $html_data;
-    }
-
-    /**
-     * Puts the data from the class in a way which the template can render
      * @return array
      */
-    protected function get_template_data() {
-        return ['heading' => $this->data->heading, 'textbody' => $this->data->textbody];
+    protected function get_content_wrapper_template_data($renderer) {
+        $data = parent::get_content_wrapper_template_data($renderer);
+
+         $data['background_img'] = empty($this->data_filtered->background_img) ? false :
+            (string)\moodle_url::make_pluginfile_url(\context_block::instance($this->blockid)->__get('id'),
+            'block_totara_featured_links',
+            'tile_background',
+            $this->id,
+            '/',
+            $this->data_filtered->background_img);
+
+        $data['alt_text'] = $this->get_accessibility_text();
+        $data['background_color'] = (!empty($this->data_filtered->background_color) ?
+            $this->data_filtered->background_color :
+            false);
+        $data['url'] = (!empty($this->url_mod) ? $this->url_mod : false);
+        $data['target'] = (!empty($this->data_filtered->target) ? $this->data_filtered : false);
+        return $data;
     }
 
     /**
      * moves a file from the draft area to a defined area
-     * @param array $data
-     * @return null
+     * @param \stdClass $data
+     * @return void
      */
-    public function tile_custom_save($data) {
+    public function save_content_tile($data) {
         global $CFG;
         // Saves the Draft area.
-        $draftitemid = file_get_submitted_draft_itemid(self::FILE_NAME);
+        $draftitemid = file_get_submitted_draft_itemid('background_img');
         file_save_draft_area_files($draftitemid,
             \context_block::instance($this->blockid)->__get('id'),
-            'block_featured_links', 'tile_background',
-            $draftitemid,
+            'block_totara_featured_links',
+            'tile_background',
+            $this->id,
             ['subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1]);
 
         // Gets the url to the new file.
         $fs = get_file_storage();
         $files = $fs->get_area_files(\context_block::instance($this->blockid)->__get('id'),
-            'block_featured_links',
+            'block_totara_featured_links',
             'tile_background',
-            $draftitemid,
+            $this->id,
             '',
             false);
 
         if ($file = reset($files)) {
-            $this->data->background_img = new \stdClass();
-            $this->data->background_img->url =(string) \moodle_url::make_pluginfile_url($file->get_contextid(),
-                $file->get_component(),
-                $file->get_filearea(),
-                $file->get_itemid(),
-                $file->get_filepath(),
-                $file->get_filename());
-            $this->data->background_img->itemid = $file->get_itemid();
-        } else {
-            $this->data->background_img = [];
+            $this->data->background_img = $file->get_filename();
         }
 
-        if (substr($data->url, 0, count($CFG->wwwroot)) == $CFG->wwwroot) {
-            $data->url = substr($data->url, count($CFG->wwwroot)-1);
-        } else if (substr($data->url, 0, 7) != 'http://'
-            && substr($data->url, 0, 8) != 'https://'
-            && substr($data->url, 0, 1) != '/') {
-
+        /* Checks if the url starts with the wwwroot.
+         * If it does it strips the wwwroot so it can be added back dynamically
+         * Also checks if the url doesn't start with http:// https:// or a / then it adds https://
+         * to stop people from using other protocols like FTP ect.
+        */
+        if (\core_text::substr($data->url, 0, 7) != 'http://'
+            && \core_text::substr($data->url, 0, 8) != 'https://'
+            && \core_text::substr($data->url, 0, 1) != '/') {
             $data->url = 'http://'.$data->url;
+        }
+        $wwwroot_chopped = preg_replace('/^(https:\/\/)|(http:\/\/)/', '', $CFG->wwwroot);
+        if (\core_text::substr($data->url, 0, strlen($wwwroot_chopped)) == $wwwroot_chopped) {
+            $data->url = \core_text::substr($data->url, strlen($wwwroot_chopped));
+        }
+        if (\core_text::substr($data->url, 0, strlen($CFG->wwwroot)) == $CFG->wwwroot) {
+            $data->url = \core_text::substr($data->url, strlen($CFG->wwwroot));
+        }
+        if ($data->url == '') {
+            $data->url = '/';
         }
 
         // Saves the rest of the data for the tile.
-        $this->data->alt_text = $data->alt_text;
-        $this->data->url = $data->url;
-        $this->data->heading = $data->heading;
-        $this->data->textbody = $data->textbody;
-        $this->data->background_color = $data->background_color;
-        return null;
+        if (isset($data->alt_text)) {
+            $this->data->alt_text = $data->alt_text;
+        }
+        if (isset($data->url)) {
+            $this->data->url = $data->url;
+        }
+        if (isset($data->heading)) {
+            $this->data->heading = $data->heading;
+        }
+        if (isset($data->textbody)) {
+            $this->data->textbody = $data->textbody;
+        }
+        if (isset($data->background_color)) {
+            $this->data->background_color = $data->background_color;
+        }
+        if (isset($data->target)) {
+            $this->data->target = $data->target;
+        }
+        if (isset($data->heading_location)) {
+            $this->data->heading_location = $data->heading_location;
+        }
+        return;
     }
 
     /**
-     * returns 0 for no rule 1 for showing and -1 for hidden
-     * @return int
+     * {@inheritdoc}
+     * The static tile does not use any custom rules
      */
-    public function get_custom_visibility() {
+    public function is_visible_tile() {
         return 0;
     }
 
     /**
-     * takes the data submitted from the visibility form an makes a string to save to the database
-     * @param array $data all the data from the form
-     * @return string
+     * {@inheritdoc}
+     * The static tile does not have any custom rules
      */
-    public function set_custom_visibility($data) {
+    public function save_visibility_tile($data) {
         return '';
     }
 
     /**
-     * Returns an array that the template will uses to put in text to help with acessability
+     * Returns an array that the template will uses to put in text to help with accessibility
      * example
-     *      [ 'tile_title' => string,
-     *          'link_sr-only' => string]
+     *      [ 'sr-only' => string]
      * @return array
      */
     public function get_accessibility_text() {
         $sronly = '';
-        if (isset($this->data->alt_text)) {
+        if (!empty($this->data->alt_text)) {
             $sronly = $this->data->alt_text;
-        } else if (isset($this->data->heading)) {
+        } else if (!empty($this->data->heading)) {
             $sronly = $this->data->heading;
-        } else if (isset($this->data->textbody)) {
+        } else if (!empty($this->data->textbody)) {
             $sronly = $this->data->textbody;
         }
 
         return [
-            'tile_title' => isset($this->data->alt_text) ? $this->data->alt_text : '',
-            'link_sr-only' => $sronly
+            'sr-only' => $sronly
         ];
     }
 }

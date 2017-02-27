@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,38 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
-namespace block_featured_links\form\validator;
+namespace block_totara_featured_links\form\validator;
 
 defined('MOODLE_INTERNAL') || die();
 
-use block_featured_links\tile\base;
-use ReflectionClass;
 use \totara_form\element_validator;
 
 /**
  * Class is_class_object
  * Validator that makes sure the tile type is a valid tile type not a random class
- * @package block_featured_links\form\validator
+ * @package block_totara_featured_links\form\validator
  */
-class is_class_object extends element_validator {
-
+class is_subclass_of_tile_base extends element_validator {
     /**
      * This will return an error if the type field does not contain a valid class or a class that does not extend base
      *
      * @return void adds errors to element
      */
     public function validate () {
-        $classname = $this->element->get_data()['type'];
-        if (!class_exists($classname)){
-            $this->element->add_error(get_string('invalid_class_name', 'block_featured_links'));
-        }
-        if (!is_subclass_of($classname, base::get_class())) {
-            $this->element->add_error(get_string('invalid_class', 'block_featured_links'));
+        $class_str = $this->element->get_data()['type'];
+        list($plugin_name, $class_name) = explode('-', $class_str, 2);
+        $type = "\\$plugin_name\\tile\\$class_name";
+        if (!class_exists($type) || !is_subclass_of($type, '\block_totara_featured_links\tile\base')) {
+            throw new \coding_exception('Invaide tile type');
         }
     }
 }

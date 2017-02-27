@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,40 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
-
 $functions = [
-    'block_featured_links_external_remove_tile' => [
-        'classname'   => 'block_featured_links_external',
+    'block_totara_featured_links_external_remove_tile' => [
+        'classname'   => '\\block_totara_featured_links\\external',
         'methodname'  => 'remove_tile',
-        'classpath'   => 'blocks/featured_links/externallib.php',
+        'classpath'   => 'blocks/totara_featured_links/classes/external.php',
         'description' => 'Removes a Tile',
         'type'        => 'write',
-        'capabilities'=> '',
+        'capabilities'=> 'moodle/my:manageblocks,',
         'ajax'        => true,
         'loginrequired' => true,
     ],
-    'block_featured_links_external_add_audience_list_item' => [
-        'classname'   => 'block_featured_links_external',
+    'block_totara_featured_links_external_add_audience_list_item' => [
+        'classname'   => '\\block_totara_featured_links\\external',
         'methodname'  => 'add_audience_list_item',
-        'classpath'   => 'blocks/featured_links/externallib.php',
+        'classpath'   => 'blocks/totara_featured_links/classes/external.php',
         'description' => 'renders a list item',
         'type'        => 'read',
-        'capabilities'=> '',
+        'capabilities'=> 'moodle/cohort:view',
         'ajax'        => true,
         'loginrequired' => true,
     ],
-    'block_featured_links_external_render_form' => [
-        'classname'   => 'block_featured_links_external',
-        'methodname'  => 'render_form',
-        'classpath'   => 'blocks/featured_links/externallib.php',
-        'description' => 'renders a content form',
-        'type'        => 'read',
-        'capabilities'=> '',
+    'block_totara_featured_links_external_reorder_tiles' => [
+        'classname'   => '\\block_totara_featured_links\\external',
+        'methodname'  => 'reorder_tiles',
+        'classpath'   => 'blocks/totara_featured_links/classes/external.php',
+        'description' => 'reorders the tiles',
+        'type'        => 'write',
+        'capabilities'=> 'moodle/my:manageblocks',
         'ajax'        => true,
         'loginrequired' => true,
     ]

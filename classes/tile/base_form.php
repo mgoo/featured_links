@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
- * @package block_featured_links
- *
- *
+ * @package block_totara_featured_links
  */
 
-
-namespace block_featured_links\tile;
+namespace block_totara_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
+
+use \totara_form\form;
 
 /**
  * Class base_form
  * each type of form should extend this class.
  * However plugin tile types should not extend this class
- * @package block_featured_links\tile
+ * @package block_totara_featured_links\tile
  */
-abstract class base_form{
-
-    /**
-     * THIS IS STILL UNUSED
-     */
+abstract class base_form extends form {
 
     /**
      * Defines the wrapping for the form defined in specific definition
@@ -47,8 +42,6 @@ abstract class base_form{
     protected function definition() {
         $this->model->add_action_buttons();
     }
-
-
 
     /**
      * contains the tile defined form
