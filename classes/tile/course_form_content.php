@@ -23,42 +23,27 @@
 
 namespace block_featured_links\tile;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class default_form_content
- * This is the default content form.
- * This can be used as an example for other tile types
+ * Class course_form_content
+ * Defines the content form for the course tile
  * @package block_featured_links\tile
  */
-class default_form_content extends base_form_content{
+class course_form_content extends base_form_content {
 
     /**
-     * The tile specific content options
+     * Defines the input for the course id.
      * @param \moodleform $group
      * @return null
      */
     public function specific_definition(&$mform) {
-        $mform->addElement('text', 'url', get_string('url_title', 'block_featured_links'));
-        $mform->setType('url', PARAM_URL);
+        $mform->addElement('text', 'course_name_id', get_string('course_name_label', 'block_featured_links'));
+        $mform->setType('course_name_id', PARAM_INT);
 
-        $mform->addElement('advcheckbox', 'target', get_string('link_target_label', 'block_featured_links'), '', [], ['_blank', '_self']);
-
-        $mform->addElement('text', 'heading', get_string('tile_title', 'block_featured_links'));
-        $mform->setType('heading', PARAM_TEXT);
-
-        $mform->addElement('textarea', 'textbody', get_string('tile_description', 'block_featured_links'));
-        $mform->setType('textbody', PARAM_TEXT);
-
-        $mform->addElement('select', 'heading_location', get_string('heading_location', 'block_featured_links'), [
+        $mform->addElement('select', 'heading_location', get_string('heading_location', 'block_featured_links'),[
             'top' => get_string('top_heading', 'block_featured_links'),
             'bottom' => get_string('bottom_heading', 'block_featured_links')
         ]);
-
-        $mform->addElement('filemanager', 'background_img', get_string('tile_background', 'block_featured_links'), ['subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1]);
-
-        $mform->addElement('text', 'alt_text', get_string('tile_alt_text', 'block_featured_links'));
-        $mform->setType('alt_text', PARAM_TEXT);
 
         $mform->addElement('color', 'background_color', get_string('tile_background_color', 'block_featured_links'));
         $mform->setType('background_color', PARAM_TEXT);
@@ -66,15 +51,17 @@ class default_form_content extends base_form_content{
     }
 
     /**
-     * The form requires the javascirpt and css for spectrum as well as passing in the strings
+     * Gets the requirements for the form
+     * spectrum and autocomplemete
      */
     public function requirements () {
         parent::requirements();
-        global $PAGE;
+        global $PAGE, $DB;
         $PAGE->requires->css(new \moodle_url('/blocks/featured_links/spectrum/spectrum.css'));
-        $PAGE->requires->strings_for_js(['less', 'clear_color'], 'block_featured_links');
+        $PAGE->requires->strings_for_js(['less', 'clear_color', 'course_select'], 'block_featured_links');
         $PAGE->requires->strings_for_js(['cancel', 'choose', 'more'], 'moodle');
         $PAGE->requires->js_call_amd('block_featured_links/spectrum', 'spectrum');
         $PAGE->add_body_class('contains-spectrum-colorpicker');
     }
+
 }

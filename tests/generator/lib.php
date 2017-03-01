@@ -35,8 +35,37 @@ class block_featured_links_generator extends testing_block_generator {
      * @return \block_featured_links\tile\default_tile
      */
     public function create_default_tile($blockinstanceid) {
-        $tile = \block_featured_links\tile\default_tile::add_tile($blockinstanceid);
+        $tile = \block_featured_links\tile\default_tile::add($blockinstanceid);
         return $tile;
     }
 
+    /**
+     * Creates a new course tile
+     * @param int $blockinstanceid
+     * @return \block_featured_links\tile\course_tile
+     */
+    public function create_course_tile($blockinstanceid) {
+        $tile = \block_featured_links\tile\course_tile::add($blockinstanceid);
+        return $tile;
+    }
+
+    /**
+     * Created a new multi image
+     * @param int $blockinstanceid
+     * @return \block_featured_links\tile\gallery_tile
+     */
+    public function create_gallery_tile($blockinstanceid) {
+        $tile = \block_featured_links\tile\gallery_tile::add($blockinstanceid);
+        return $tile;
+    }
+
+    /**
+     * @param int $blockinstanceid
+     * @param string $type
+     * @return \block_featured_links\tile\base
+     */
+    public function create_tile($blockinstanceid, $type) {
+        $tile = $type::add($blockinstanceid);
+        return $tile;
+    }
 }

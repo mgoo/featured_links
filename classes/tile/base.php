@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,284 +19,83 @@
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
  * @package block_featured_links
- *
- *
  */
 
 namespace block_featured_links\tile;
 
-use action_menu;
-use action_menu_link_secondary;
 use core\output\flex_icon;
-use renderer_base;
 
 defined('MOODLE_INTERNAL') || die();
-/**
- *
- */
-define('BLOCK_FEATURED_LINKS_ACCESS_SHOW', 'show');
-/**
- *
- */
-define('BLOCK_FEATURED_LINKS_ACCESS_HIDE', 'hide');
-/**
- *
- */
-define('BLOCK_FEATURED_LINKS_ACCESS_CUSTOM', 'custom');
-
 
 /**
  * Class base
  * @package block_featured_links\tile
  */
 abstract class base{
-    /** @var number id of the tile */
-    public $id;
-    /** @var number the order that the tile appears in the block */
-    public $sort;
-    /** @var number the id of the block that the tile is in */
-    public $blockid;
-    /** @var number the type of tile that it is */
-    public $type;
-    /** @var number the time that the tile was created */
-    public $timecreated;
-    /** @var number the last time that the tile was modified */
-    public $timemodified;
-    /** @var number the id of user who modified the tile last */
-    public $userid;
+    /** Defines the value for the tile to be visible to everyone.*/
+    const VISIBILITY_SHOW = 0;
+    /** Defines the value for the tile to be hidden from everyone.*/
+    const VISIBILITY_HIDE = 1;
+    /** Defines the values for the visibility of the tile to be defined by the custom rules.*/
+    const VISIBILITY_CUSTOM = 2;
+    /** Defines the value for the aggregation option that the user meets all of the defined rules.*/
+    const AGGREGATION_ALL = 1;
+    /**Defines the value for the aggregation option where the user only has to match one of the rules.*/
+    const AGGREGATION_ANY = 0;
+
+
+    /** @var int id of the tile */
+    public $id = '';
+    /** @var int the order that the tile appears in the block */
+    public $sortorder = '';
+    /** @var int the id of the block that the tile is in */
+    public $blockid = '';
+    /** @var string the type of tile that it is */
+    public $type = '';
+    /** @var int the time that the tile was created */
+    public $timecreated = '';
+    /** @var int the last time that the tile was modified */
+    public $timemodified = '';
+    /** @var int the id of user who created the tile */
+    public $userid = '';
     /** @var string the raw version of the data */
-    public $data_raw;
+    public $dataraw = '';
     /** @var \stdClass the unfiltered and parsed version of the data */
     public $data;
     /** @var string has the modified version of the url so that if the www root changes the url will to */
-    public $url_mod;
+    public $url_mod = '';
     /** @var \stdClass the filtered and parsed version of the data */
     public $data_filtered;
     /** @var string determines the basic visibility of the tile */
-    public $access;
-    /** @var boolean this holds whether or not to apply audience rules */
-    public $audience_showing;
-    /** @var string what type of aggregation does the audiences use and whether to display the form values*/
-    public $audience_aggregation;
+    public $visibility = '';
     /** @var boolean this hold whether or not to apply preset rules and whether to display the form */
-    public $preset_showing;
+    public $presetshowing = '';
     /** @var array the presets that apply to the tile  */
-    public $presets;
+    public $presets = [];
     /** @var string the raw version of $presets */
-    public $presets_raw;
+    public $presetsraw = '';
     /** @var string what type of aggregation do the presets use */
-    public $presets_aggregation;
+    public $presetsaggregation = '';
     /** @var string the overall aggregation for the audiences presets and custom rules */
-    public $overall_aggregation;
+    public $overallaggregation = '';
     /** @var boolean this holds whether the custom tile rules are showing */
-    public $tile_rules_showing;
+    public $tilerulesshowing = '';
     /** @var string the custom rules that are saved and managed by the tile classes */
-    public $custom_rules;
-    /** @var array created from exploding audience_raw */
-    public $audiences;
-    /** @var string comer separated values of the audience that the tile is visible to */
-    public $audiences_raw;
+    public $tilerules = '';
 
-    /** gets the name of the tile to display in the edit form */
-    public static function get_name() {
-        throw new \coding_exception('Please Override this function');
-    }
+    /** @var string The name of the content template */
+    protected $content_template = 'block_featured_links/content';
+    /** @var string the name of the content wrapper template */
+    protected $content_wrapper_template = 'block_featured_links/content_wrapper';
+    /** @var array The fields of the data object that the tile uses */
+    protected $used_fields;
+    /** @var string contains the classes to set usually on the content div */
+    protected $content_class = '';
+    /** @var string This is the name of the class that contains the definition for the content form for this tile */
+    protected $content_form = '\block_featured_links\tile\default_form_content';
+    /** @var string This is the name of the class which defines the visibility form */
+    protected $visibility_form = '\block_featured_links\tile\default_form_visibility';
 
-    /**
-     * This makes a new tile.
-     * The tile class must be passed
-     * The block id must exist
-     * @param int $blockinstanceid
-     * @param \block_featured_links\tile\base $tile_class
-     * @return null
-     * @throws \Exception
-     * @throws \coding_exception
-     */
-    public static function add_tile($blockinstanceid, $tile_class = null) {
-        global $DB, $USER;
-        if (!$DB->record_exists('block_instances', ['id' => $blockinstanceid])) {
-            throw new \Exception('The Block instance id was not not found');
-        }
-        if (empty($tile_class)) {
-            throw new \coding_exception('Please pass the tile class to the parent function');
-        }
-        $tile_class->type = '\block_featured_links\tile\default_tile';
-        $tile_class->blockid = $blockinstanceid;
-
-        $tile_class->data = new \stdClass();
-
-        // Finds the id for the row.
-        $tile_class->id = $DB->insert_record('block_featured_tiles', $tile_class, true);
-
-        $tile_class->timecreated = time();
-        $tile_class->userid = $USER->id;
-        $tile_class->timemodified = time();
-
-        // Get the ordering for the new tile.
-        $order_values = $DB->get_fieldset_select('block_featured_tiles', 'sort', "blockid = $blockinstanceid");
-        $tile_class->sort = $order_values ? max($order_values) + 1 : 1; // Sets the minimum position to 1.
-
-        $tile_class->access = BLOCK_FEATURED_LINKS_ACCESS_SHOW;
-        $tile_class->set_default_visibility();
-
-        $tile_class->custom_add();
-
-        $tile_class->encode_data();
-        $tile_class->data_filtered = $tile_class->filter_values();
-        $DB->update_record('block_featured_tiles', $tile_class);
-        return $tile_class;
-    }
-
-    /**
-     * Returns the name of this class
-     * @return string
-     */
-    public static function get_class(){
-        return get_called_class();
-    }
-    /**
-     * This does the tile defined add
-     * Ie instantiates objects so they can be referenced later
-     * @param $tile_class
-     * @return null
-     */
-    public abstract function custom_add();
-    /**
-     * Removes the unused values in the data object for the content form.
-     * This means that only the value that the tile uses will be updated and supplied to the content form
-     * and the tile template allows for values to be persistent when changing tile types.
-     * @return \stdClass
-     */
-    protected abstract function filter_values();
-    /**
-     * This will return an instance of the edit content form for the tile
-     * the edit tile object must extend base_form_content
-     * @param array $parameters This is the parameters for the form
-     * @return base_form_content
-     */
-    public abstract function edit_content_form($parameters);
-    /**
-     * Similar to the edit_content_form but gets the visibility form object instead
-     * @param array $parameters
-     * @return base_form_auth
-     */
-    public abstract function edit_auth_form($parameters);
-    /**
-     * This will render the content of the tile to html
-     * background images and color should not be applied here rather set the values in the data for the tile
-     * also accessibility text for the tiles link should go in the get_accessibility_text() function
-     * @param \core_renderer $renderer
-     * @return string HTML code
-     */
-    public abstract function render_content(\core_renderer $renderer);
-    /**
-     * Gets the data to be passed to the render_content function
-     * @return array
-     */
-    protected abstract function get_template_data();
-    /**
-     * This defines the saving process for the custom tile fields
-     * This should modify the data variable rather than chang directly saving to the database cause if you don't
-     * what you save will get overridden when the tile is saved to the database.
-     * @param \stdClass $data
-     * @return null
-     */
-    public abstract function tile_custom_save($data);
-    /**
-     * Gets whether the tile is visible to the user by the custom rules defined by the tile.
-     * This should only be used by the is_visible() function.
-     * @return int (-1 = hidden, 0 = no rule, 1 = showing)
-     */
-    public abstract function get_custom_visibility();
-    /**
-     * Saves the data for the custom visibility.
-     * Should only modify the custom_rules variable so the reset of the visibility and tile options are left the same
-     * when its saved to the database
-     * @param \stdClass $data all the data from the form
-     * @return null
-     */
-    public abstract function set_custom_visibility($data);
-    /**
-     * Returns an array that the template will uses to put in text to help with accessibility
-     * example
-     *      [ 'tile_title' => 'value',
-     *          'link_sr-only' => 'value']
-     * @return array
-     */
-    public abstract function get_accessibility_text();
-
-    /**
-     * returns the context array for rendering the tile in the block
-     * @param renderer_base $core_renderer
-     * @param string $tile_content The HTML code for the content of the block
-     * @return array
-     */
-    public function export_for_template($core_renderer, $tile_content){
-        global $PAGE;
-        $edit_url = (string)((new \moodle_url('/blocks/featured_links/edit_tile@@replace@@.php',
-            ['blockinstanceid' => $this->blockid,
-                'tileid' => $this->id]))->out_as_local_url());
-        return [
-            'tile_id' => $this->id,
-            'content' => $tile_content,
-            'disabled' => (!$this->is_visible()),
-            'background_img' => (isset($this->data_filtered->background_img)
-                    && !is_array($this->data_filtered->background_img) ?
-                get_object_vars($this->data_filtered->background_img) : false),
-            'alt_text' => $this->get_accessibility_text(),
-            'background_color' => (isset($this->data_filtered->background_color) ?
-                $this->data_filtered->background_color :
-                false),
-            'url' => (isset($this->url_mod) ? $this->url_mod : false),
-            'controls' => $core_renderer->render(
-                new action_menu([
-                    new action_menu_link_secondary(
-                        new \moodle_url(
-                            str_replace(
-                                '@@replace@@',
-                                '_content',
-                                $edit_url.'&return_url='.$PAGE->url->out_as_local_url()
-                            )
-                        ),
-                        new \pix_icon('i/edit', 'edit_alt_text', 'moodle', ['class' => 'iconsmall', 'title' => '']),
-                        'Content',
-                        ['type' => 'edit']),
-                    new action_menu_link_secondary(
-                        new \moodle_url(
-                            str_replace(
-                                '@@replace@@',
-                                '_auth', $edit_url.'&return_url='.$PAGE->url->out_as_local_url()
-                            )
-                        ),
-                        new \pix_icon('i/hide', 'hide_alt_text', 'moodle',  ['class' => 'iconsmall', 'title' => '']),
-                        'Visibility',
-                        ['type' => 'edit_vis']),
-                    new action_menu_link_secondary(
-                        new \moodle_url(''),
-                        new \pix_icon('i/delete', 'delete_alt_text', 'moodle',  ['class' => 'iconsmall', 'title' => '']),
-                        'Delete',
-                        ['type' => 'remove', 'blockid' => $this->blockid, 'tileid' => $this->id])
-                ])
-            )
-        ];
-    }
-
-    /**
-     * returns the array of data used to render the tile with the add tile button
-     * @param int $blockid the id of the block that the adder tile will be in
-     * @return array
-     */
-    final public static function adder_export_for_template($blockid) {
-        global $PAGE;
-        return [
-            'adder' => true,
-            'url' => (string)new \moodle_url('/blocks/featured_links/edit_tile_content.php',
-                [
-                    'blockinstanceid' => $blockid,
-                    'return_url' => $PAGE->url->out_as_local_url()]
-            )
-        ];
-    }
 
 
     /**
@@ -307,88 +106,346 @@ abstract class base{
      * @param \stdClass $tile
      * @internal param int $tileid
      */
-    public function __construct ($tile = null) {
-        global $DB;
+    public function __construct($tile = null) {
+        global $DB, $USER;
         if (is_null($tile)) {
+            // Even if the tile is not created yet we can still know the type.
+            $type_arr = explode('\\', get_called_class());
+            $this->type = $type_arr[0].'-'.$type_arr[count($type_arr) - 1];
+            $this->userid = $USER->id;
             return;
         } else if (is_object($tile)) {
             $tile_data = $tile;
         } else {
-            $tile_data = $DB->get_record('block_featured_tiles', ['id' => (int)$tile], '*', MUST_EXIST);
+            $tile_data = $DB->get_record('block_featured_links_tiles', ['id' => (int)$tile], '*', MUST_EXIST);
         }
 
         foreach ($tile_data as $key => $value) {
             $this->$key = $value;
         }
-        $class = new $this->type();
-        if (!$class instanceof base) {
-            throw new \coding_exception('The class is not a valid tile class');
-        }
-
-//        $this->audiences_raw = '';
-//        $results = $DB->get_records('cohort_visibility',
-//            [
-//                'instanceid' => $this->id,
-//                'instancetype' => COHORT_ASSN_ITEMTYPE_FEATURED_LINKS
-//            ],
-//            '',
-//            'cohortid'
-//        );
-
-//        if ($results !== false) {
-//            foreach ($results as $cohort_vis) {
-//                $this->audiences_raw .= ',' . $cohort_vis->cohortid;
-//            }
-//            $this->audiences_raw = substr($this->audiences_raw, 1);
-//        }
 
         $this->decode_data();
     }
 
     /**
-     * gets the class object for the tile that was specified with the tileid
-     * @param $tileid
-     * @return mixed
+     * This makes a new tile.
+     * The tile class must be passed
+     * The block id must exist
+     * @param int $blockinstanceid
+     * @return \block_featured_links\tile\base
+     * @throws \coding_exception
      */
-    final public static function get_tile_class ($tileid) {
+    public static function add($blockinstanceid) {
+        global $DB, $USER;
+        $blockinstanceid = (int)$blockinstanceid;
+        if (!$DB->record_exists('block_instances', ['id' => $blockinstanceid])) {
+            throw new \coding_exception('The Block instance id was not found');
+        }
+        $class_name = get_called_class();
+        $tile_instance = new $class_name();
+        $tile_instance->blockid = (string)$blockinstanceid;
+
+        if (!isset($tile_instance->data)) {
+            $tile_instance->data = new \stdClass();
+        }
+        // Finds the id for the row.
+        $tile_instance->id = (string)$DB->insert_record('block_featured_links_tiles', $tile_instance, true);
+
+        $tile_instance->timecreated = (string)time();
+        $tile_instance->userid = (string)$USER->id;
+        $tile_instance->timemodified = (string)time();
+
+        // Get the ordering for the new tile.
+        $order_values = $DB->get_fieldset_select('block_featured_links_tiles', 'sortorder', "blockid = $blockinstanceid");
+        $tile_instance->sortorder = (string)($order_values ? max($order_values) + 1 : 1); // Sets the minimum position to 1.
+
+        $tile_instance->visibility = (string)self::VISIBILITY_SHOW;
+        $tile_instance->set_default_visibility();
+
+        $tile_instance->add_tile();
+
+        $tile_instance->encode_data();
+        $tile_instance->filter_data_values();
+        $DB->update_record('block_featured_links_tiles', $tile_instance);
+        return $tile_instance;
+    }
+    /**
+     * This does the tile defined add
+     * Ie instantiates objects so they can be referenced later
+     * @return null
+     */
+    public abstract function add_tile();
+    /**
+     * Deletes the current tile.
+     * @return bool whether or not the tile was successfully removed
+     */
+    final public function remove_tile() {
         global $DB;
-        $tile= $DB->get_record('block_featured_tiles', ['id' => $tileid], '*', MUST_EXIST);
-        return new $tile->type($tile);
+        // Delete the tile.
+        if (!$DB->get_record('block_featured_links_tiles', ['id' => $this->id])) {
+            return false;
+        }
+        // Remove the row form the tiles table.
+        $DB->delete_records('block_featured_links_tiles', ['id' => $this->id]);
+        self::squash_ordering($this->blockid);
+        return true;
     }
 
     /**
-     * This gets the default data to pass to the auth form
-     * @return \stdClass
+     * Copy the files for the tile to the new location for the new tile
+     * @param base $new_tile the object of the new tile
+     * @return void
      */
-    public function get_auth_form_data() {
-        $data = new \stdClass();
-        $data->access = $this->access;
-        $data->preset_aggregation = $this->presets_aggregation;
-        $data->presets_checkboxes = $this->presets;
-        $data->overall_aggregation = $this->overall_aggregation;
-        $data->preset_showing = $this->preset_showing;
-        $data->tile_rules_showing = $this->tile_rules_showing;
-        return $data;
+    public function copy_files(&$new_tile) {
     }
 
+    /** gets the name of the tile to display in the edit form */
+    public static function get_name() {
+        throw new \coding_exception('Please Override this function');
+    }
+    /**
+     * gets the class object for the tile that was specified with the id of the tile or the row of the tile
+     * @param mixed $tile_data
+     * @return mixed
+     */
+    final public static function get_tile_instance ($tile_data) {
+        global $DB;
+        if (is_int($tile_data) || is_numeric($tile_data)) {
+            $tile = $DB->get_record('block_featured_links_tiles', ['id' => $tile_data], '*', MUST_EXIST);
+        } else {
+            $tile = $tile_data;
+        }
+        list($plugin_name, $class_name) = explode('-', $tile->type, 2);
+        $type = "\\$plugin_name\\tile\\$class_name";
+        return new $type($tile);
+    }
+    /**
+     * This will return an instance of the edit content form for the tile
+     * the edit tile object must extend base_form_content
+     * @param array $parameters This is the parameters for the form
+     * @return base_form_content
+     */
+    public function get_content_form($parameters) {
+        if ($parameters['blockinstanceid'] != $this->blockid) {
+            throw new \coding_exception('The block id in parameters did not match the block id for the tile');
+        }
+        $data_obj = $this->get_content_form_data();
+        $parameters['type'] = $data_obj->type;
+        $mform = new $this->content_form($this, new \moodle_url('edit_tile_content.php', $parameters), $data_obj);
+        $mform->set_data($data_obj);
+        return $mform;
+    }
+    /**
+     * Gets the data for the content form
+     * @return \stdClass
+     * @throws \Exception
+     */
+    public function get_content_form_data() {
+        global $DB;
+        if ($DB->record_exists('block_featured_links_tiles', ['id' => !empty($this->id) ? $this->id : -1])) {
+            if (!$DB->record_exists('block_instances', ['id' => $this->blockid])) {
+                throw new \coding_exception('The block for the tile was not found');
+            }
+            $data_obj = $this->data_filtered;
+            $data_obj->sortorder = $this->sortorder;
+        } else { // Is new tile.
+            $data_obj = new \stdClass();
+            $data_obj->sortorder = self::get_next_sortorder($this->blockid);
+        }
+        $class_arr = explode('\\', get_class($this));
+        $plugin_name = $class_arr[0];
+        $class_name = $class_arr[count($class_arr) - 1];
+        $data_obj->type = $plugin_name.'-'.$class_name;
+        return $data_obj;
+    }
+
+    /**
+     * checks whether it makes sence for the tile to have visibility options
+     * for the visibility to be hidden the block must be on a users dashboard so the page pattern has to match my-dashboard and
+     * have a parent context level of user
+     * @return bool whether the tile should have visibility options
+     */
+    public function is_visibility_applicable() {
+        global $DB;
+        $blockinstance = $DB->get_record('block_instances', ['id' => $this->blockid], 'pagetypepattern,parentcontextid', MUST_EXIST);
+        $parent_context = \context::instance_by_id($blockinstance->parentcontextid);
+        return (!preg_match('/^my-dashboard/', $blockinstance->pagetypepattern) || $parent_context->contextlevel != CONTEXT_USER);
+    }
+    /**
+     * Similar to the edit_content_form but gets the visibility form object instead
+     * @param array $parameters ['blockinstanceid' => 1, 'tileid' => 2]
+     * @return base_form_visibility
+     */
+    public function get_visibility_form($parameters) {
+        global $DB;
+        if (!$DB->record_exists('block_instances', ['id' => $parameters['blockinstanceid']])) {
+            throw new \coding_exception('The block for the tile does not exists');
+        }
+        if (!$DB->record_exists('block_featured_links_tiles', ['id' => $parameters['tileid']])) {
+            throw new \coding_exception('The tile does not exist');
+        }
+        if ($parameters['blockinstanceid'] != $this->blockid) {
+            throw new \coding_exception('The block id in parameters did not match the block id for the tile');
+        }
+        if ($parameters['tileid'] != $this->id) {
+            throw new \coding_exception('The tile id in the parameters did not match the id of the tile');
+        }
+        if ($this->id != $parameters['tileid']) {
+            throw new \Exception('The tileid passed and the tile id of the object do not match');
+        }
+        $data_obj = $this->get_visibility_form_data();
+        $mform = new $this->visibility_form($this, new \moodle_url('edit_tile_visibility.php', $parameters), $data_obj);
+        $mform->set_data($data_obj);
+        return $mform;
+    }
+    /**
+     * This gets the default data to pass to the auth form
+     * @return array
+     */
+    public function get_visibility_form_data() {
+//        var_dump($this->presets);
+        $data = [
+            'visibility' => ['visibility' => $this->visibility],
+            'preset_aggregation' => ['preset_aggregation' => $this->presetsaggregation],
+            'presets' => $this->presets,
+            'overall_aggregation' => ['overall_aggregation' => $this->overallaggregation],
+            'preset_showing' => $this->presetshowing,
+            'tile_rules_showing' => $this->tilerulesshowing
+        ];
+        if (isset($data['presets_checkboxes'][0]) && $data['presets_checkboxes'][0] == '') {
+            unset($data['presets_checkboxes']);
+        }
+        return $data;
+    }
+    /**
+     * Returns an array that the template will uses to put in text to help with accessibility
+     * example (for the default content wrapper)
+     *      [ 'tile_title' (optional) => 'value',
+     *          'sr-only' => 'value']
+     * @return array
+     */
+    public abstract function get_accessibility_text();
+    /**
+     * This saves the tile object to the data base by calling tile_custom_save and encoding the data
+     * @param \stdClass $data
+     */
+    final public function save_content($data) {
+        global $DB;
+        if (!empty($data->type)) {
+            $this->type = $data->type;
+            unset($data->type);
+        }
+        if (!empty($data->sortorder)) {
+            $this->sortorder = $data->sortorder;
+            unset($data->sortorder);
+        }
+        $this->save_content_tile($data);
+        $this->save_ordering();
+        $this->timemodified = time();
+        $this->encode_data();
+        $DB->update_record('block_featured_links_tiles', $this);
+    }
+    /**
+     * This defines the saving process for the custom tile fields
+     * This should modify the data variable rather than chang directly saving to the database cause if you don't
+     * what you save will get overridden when the tile is saved to the database.
+     * @param \stdClass $data
+     * @return void
+     */
+    public abstract function save_content_tile($data);
+    /**
+     * This saves the visibility options
+     * @param $data
+     */
+    final public function save_visibility($data) {
+        global $DB;
+        $this->visibility = !isset($data->visibility['visibility']) ? self::VISIBILITY_SHOW : $data->visibility['visibility'];
+        // Remove Values if its not custom.
+        if ($this->visibility != self::VISIBILITY_CUSTOM) {
+            $this->set_default_visibility();
+        } else {
+            $this->presetsraw = !isset($data->presets) ? '' : implode(',', array_keys($data->presets));
+            $this->presetsaggregation = empty($data->preset_aggregation['preset_aggregation']) ? (string)self::AGGREGATION_ANY : $data->preset_aggregation['preset_aggregation'];
+            $this->overallaggregation = empty($data->overall_aggregation['overall_aggregation']) ? (string)self::AGGREGATION_ANY : $data->overall_aggregation['overall_aggregation'];
+            $this->tilerules = $this->save_visibility_tile($data);
+            $this->presetshowing = !isset($data->preset_showing) ? 0 : $data->preset_showing;
+            $this->tilerulesshowing = !isset($data->tile_rules_showing) ? 0 : $data->tile_rules_showing;
+        }
+        $this->timemodified = time();
+
+        $DB->update_record('block_featured_links_tiles', $this);
+        $this->decode_data();
+    }
+    /**
+     * Saves the data for the custom visibility.
+     * Should only modify the custom_rules variable so the reset of the visibility and tile options are left the same
+     * when its saved to the database
+     * @param \stdClass $data all the data from the form
+     * @return string
+     */
+    public abstract function save_visibility_tile($data);
+
+    /**
+     * Gets the javascript and $PAGE requirements for the tile type
+     */
+    protected function get_requirements() {
+    }
+    /**
+     * Gets the data to be passed to the render_content function
+     * @return array
+     */
+    protected abstract function get_content_template_data();
+    /**
+     * renders the tile contents
+     * should return a string of HTML
+     * the div wrappers and buttons are added by the content_wrapper template
+     * @param \renderer_base $renderer
+     * @return string
+     */
+    public function render_content(\renderer_base $renderer) {
+        $this->get_requirements();
+        $data = $this->get_content_template_data();
+        return $renderer->render_from_template($this->content_template, $data);
+    }
+    /**
+     * Renders the content_wrapper template
+     * to change the template set the content_wrapper_template variable at the top of the class.
+     * Note that parts of the content_wrapper template should be in every tile no matter what like controls so the tile
+     * can be edited. Also controls should only be visible when the user is editing the block.
+     * @param \renderer_base $renderer
+     * @param array $settings
+     * @return mixed
+     */
+    public function render_content_wrapper($renderer, $settings) {
+        $data = $this->get_content_wrapper_template_data($renderer);
+        $data = array_merge($data, $settings);
+        return $renderer->render_from_template($this->content_wrapper_template, $data);
+    }
+
+    /**
+     * Gets whether the tile is visible to the user by the custom rules defined by the tile.
+     * This should only be used by the is_visible() function.
+     * @return int (-1 = hidden, 0 = no rule, 1 = showing)
+     */
+    public abstract function is_visible_tile();
     /**
      * Calculates whether the tile is visible for the user
      * @return bool
      */
     final public function is_visible() {
         global $USER;
-        if (!isset($this->access)) {
+        if (empty($this->visibility)) {
             return true;
         }
-        if ($this->access == BLOCK_FEATURED_LINKS_ACCESS_SHOW) {
+        if ($this->visibility == self::VISIBILITY_SHOW) {
             return true;
-        } else if ($this->access == BLOCK_FEATURED_LINKS_ACCESS_HIDE) {
+        } else if ($this->visibility == self::VISIBILITY_HIDE) {
             return false;
-        } else if ($this->access == BLOCK_FEATURED_LINKS_ACCESS_CUSTOM) {
+        } else if ($this->visibility == self::VISIBILITY_CUSTOM) {
             $matches = 0;
             $restrictions = 0;
             // Presets.
-            if ($this->preset_showing) {
+            if ($this->presetshowing) {
                 $preset_matches = 0;
                 $preset_restrictions = 0;
                 if (in_array('loggedin', $this->presets)) {
@@ -426,13 +483,13 @@ abstract class base{
                         $preset_restrictions++;
                     }
                 }
-                if ($this->presets_aggregation == 'any') {
+                if ($this->presetsaggregation == self::AGGREGATION_ANY) {
                     if ($preset_matches > 0) {
                         $matches++;
                     } else if ($preset_restrictions > 0) {
                         $restrictions++;
                     }
-                } else if ($this->presets_aggregation == 'all') {
+                } else if ($this->presetsaggregation == self::AGGREGATION_ALL) {
                     if ($preset_restrictions > 0) {
                         $restrictions++;
                     } else if ($preset_matches > 0) {
@@ -440,9 +497,9 @@ abstract class base{
                     }
                 }
             }
-            if ($this->tile_rules_showing) {
+            if ($this->tilerulesshowing) {
                 // Custom.
-                $custom_visibility = $this->get_custom_visibility();
+                $custom_visibility = $this->is_visible_tile();
                 if ($custom_visibility == 1) {
                     $matches++;
                 } else if ($custom_visibility == -1) {
@@ -450,9 +507,9 @@ abstract class base{
                 }
             }
             // Overall Aggregation.
-            if ($this->overall_aggregation == 'any') {
+            if ($this->overallaggregation == self::AGGREGATION_ANY) {
                 return $matches > 0 || $restrictions == 0; // Return true if there are no rules as well.
-            } else if ($this->overall_aggregation == 'all') {
+            } else if ($this->overallaggregation == self::AGGREGATION_ALL) {
                 return $restrictions == 0;
             }
         }
@@ -460,151 +517,199 @@ abstract class base{
     }
 
     /**
+     * Checks if the user has the capability to edit the tile
+     * This is similar to the user_can_edit method in block_base class
+     * @return boolean
+     */
+    public function can_edit_tile() {
+        global $USER, $DB;
+        $block_context = \context_block::instance($this->blockid);
+        if (has_capability('moodle/block:edit', $block_context)) {
+            return true;
+        }
+
+        $block_instance_data = $DB->get_record('block_instances', ['id' => $this->blockid]);
+        $parent_context_data = $DB->get_record('context', ['id' => $block_instance_data->parentcontextid]);
+        $page_context = \context::instance_by_id($parent_context_data->id);
+
+        // The blocks in My Moodle are a special case.  We want them to inherit from the user context.
+        if (!empty($USER->id)
+            && $parent_context_data->contextlevel == CONTEXT_USER             // Page belongs to a user
+            && $parent_context_data->instanceid == $USER->id                  // Page belongs to this user
+            && $USER->id == $this->userid) {                                  // Tile belongs to the user
+            return has_capability('moodle/my:manageblocks', $page_context);
+        }
+        return false;
+    }
+
+    /**
+     * returns the array of data used to render the tile with the add tile button
+     * @param int $blockid the id of the block that the adder tile will be in
+     * @return array
+     */
+    final public static function export_for_template_add_tile($blockid) {
+        global $PAGE;
+        return [
+            'adder' => true,
+            'url' => (string)new \moodle_url('/blocks/featured_links/edit_tile_content.php',
+                [
+                    'blockinstanceid' => $blockid,
+                    'return_url' => $PAGE->url->out_as_local_url()]
+            )
+        ];
+    }
+    /**
+     * Shifts all the sortorder values down to the lowest positive values so -1,3,5 becomes 1,2,3
+     * @param int $blockid
+     */
+    final public static function squash_ordering($blockid) {
+        global $DB;
+        $tiles = $DB->get_records('block_featured_links_tiles', ['blockid' => $blockid], 'sortorder ASC');
+        $i = 1;
+        foreach ($tiles as $tile) {
+            if ($i != $tile->sortorder) {
+                $tile->sortorder = $i;
+                $DB->update_record('block_featured_links_tiles', $tile);
+            }
+            $i++;
+        }
+    }
+    /**
+     * Gets the next value for sortorder that a new tile should have
+     * @param $blockid
+     * @return int
+     */
+    final protected static function get_next_sortorder($blockid) {
+        global $DB;
+        return $DB->count_records(
+            'block_featured_links_tiles',
+            ['blockid' => $blockid]) + 1;
+    }
+
+    /**
      * saves the sort to the database
+     * Needs to be public for ajax calls
      * @return null
      */
     final public function save_ordering() {
         global $DB;
         // Gets what the sort used to be.
-        $current_tile = $DB->get_record('block_featured_tiles', ['id' => $this->id]);
-        $old_sort =  $current_tile->sort;
+        $current_tile = $DB->get_record('block_featured_links_tiles', ['id' => $this->id], '*', MUST_EXIST);
+        $old_sortorder = $current_tile->sortorder;
 
-        if ($old_sort == $this->sort) {
+        if ($old_sortorder == $this->sortorder) {
             return;
         }
 
         // Shifts all the tiles between the new position and the old position to make room for the tile.
-        $orders = $DB->get_records('block_featured_tiles', ['blockid' => $this->blockid]);
+        $orders = $DB->get_records('block_featured_links_tiles', ['blockid' => $this->blockid]);
         foreach ($orders as $tile) {
-            if ($tile->sort >= $old_sort && $tile->sort <= $this->sort) {
-                $tile->sort -= 1;
-            } else if ($tile->sort <= $old_sort && $tile->sort >= $this->sort) {
-                $tile->sort += 1;
+            if ($tile->sortorder >= $old_sortorder && $tile->sortorder <= $this->sortorder) {
+                $tile->sortorder -= 1;
+            } else if ($tile->sortorder <= $old_sortorder && $tile->sortorder >= $this->sortorder) {
+                $tile->sortorder += 1;
             }
-            $DB->update_record('block_featured_tiles', $tile);
+            $DB->update_record('block_featured_links_tiles', $tile);
         }
-        $current_tile->sort = $this->sort;
-        $DB->update_record('block_featured_tiles', $current_tile);
-        $this->squash_ordering($this->blockid);
+        $current_tile->sortorder = $this->sortorder;
+        $DB->update_record('block_featured_links_tiles', $current_tile);
+        self::squash_ordering($this->blockid);
+        $this->sortorder = $DB->get_field('block_featured_links_tiles', 'sortorder', ['id' => $this->id]);
         return;
     }
-
-    /**
-     * Shifts all the sort values down to the lowest values so 1,3,5 becomes 1,2,3
-     * @param int $blockid
-     */
-    final public static function squash_ordering($blockid){
-        global $DB;
-        $tiles_hashed = $DB->get_records('block_featured_tiles', ['blockid' => $blockid], 'sort');
-        $tiles = [];
-        foreach ($tiles_hashed as $tile) {
-            array_push($tiles, $tile);
-        }
-        foreach ($tiles as $index => $tile) {
-            $tile->sort = $index + 1;
-            $DB->update_record('block_featured_tiles', $tile);
-        }
-    }
-
-    /**
-     * Gets the next value for sort that a new tile should have
-     * @param $blockid
-     * @return int
-     */
-    final protected static function get_next_sortorder($blockid){
-        global $DB;
-        return $DB->count_records(
-            'block_featured_tiles',
-            ['blockid' => $blockid]) + 1;
-    }
-
-    /**
-     * This saves the tile object to the data base by calling tile_custom_save and encoding the data
-     * @param \stdClass $data
-     */
-    final public function save($data) {
-        global $DB;
-        if (isset($data->type)) {
-            $this->type = $data->type;
-        }
-        if (isset($data->sort)) {
-            $this->sort = $data->sort;
-        }
-
-        $this->tile_custom_save($data);
-        $this->save_ordering();
-        unset($this->sort);
-        $this->timemodified = time();
-
-        $this->encode_data();
-        $DB->update_record('block_featured_tiles', $this);
-    }
-
-    /**
-     * This saves the visibility options
-     * @param $data
-     */
-    final public function save_visibility($data) {
-        global $DB;
-        $this->access = !isset($data->access) ? BLOCK_FEATURED_LINKS_ACCESS_SHOW : $data->access;
-
-        // Remove Values if its not custom.
-        if ($data->access != BLOCK_FEATURED_LINKS_ACCESS_CUSTOM) {
-            $this->set_default_visibility();
-        } else {
-            $this->audience_aggregation = !isset($data->audience_aggregation) ? 'any' : $data->audience_aggregation;
-            $this->presets_raw = !isset($data->presets_checkboxes) ? '' : implode(',', $data->presets_checkboxes);
-            $this->presets_aggregation = !isset($data->preset_aggregation) ? 'any' : $data->preset_aggregation;
-            $this->overall_aggregation = !isset($data->overall_aggregation) ? 'any' : $data->overall_aggregation;
-            $this->custom_rules = $this->set_custom_visibility($data);
-            $this->audience_showing = !isset($data->audience_showing) ? 0 : $data->audience_showing;
-            $this->preset_showing = !isset($data->preset_showing) ? 0 : $data->preset_showing;
-            $this->tile_rules_showing = !isset($data->tile_rules_showing) ? 0 : $data->tile_rules_showing;
-        }
-
-        $this->timemodified = time();
-
-        $DB->update_record('block_featured_tiles', $this);
-    }
-
     /**
      * Sets the default Visibility values
      */
     protected function set_default_visibility() {
-        $this->audiences_raw = '';
-        $this->audiences = [''];
-        $this->audiences_raw = '';
-        $this->audience_aggregation = 'any';
         $this->presets = [''];
-        $this->presets_raw = '';
-        $this->presets_aggregation = 'any';
-        $this->overall_aggregation = 'any';
-        $this->custom_rules = '';
-        $this->audience_showing = 0;
-        $this->preset_showing = 0;
-        $this->tile_rules_showing = 0;
+        $this->presetsraw = '';
+        $this->presetsaggregation = (string)self::AGGREGATION_ANY;
+        $this->overallaggregation = (string)self::AGGREGATION_ANY;
+        $this->tilerules = '';
+        $this->presetshowing = '0';
+        $this->tilerulesshowing = '0';
     }
-
+    /**
+     * Gets the base data that should be passed to the content_wrapper
+     * It also renders the tile content.
+     * call this method if you are going to override this function
+     * not doing so could result in things like tiles that are no editable
+     * @param \renderer_base $renderer
+     * @return array
+     */
+    protected function get_content_wrapper_template_data($renderer) {
+        global $PAGE;
+        $action_menu_items = [];
+        $action_menu_items[] = new \action_menu_link_secondary(
+            new \moodle_url('/blocks/featured_links/edit_tile_content.php',
+                ['blockinstanceid' => $this->blockid, 'tileid' => $this->id, 'return_url' => $PAGE->url->out_as_local_url()]),
+            new \pix_icon('t/edit',
+                ''),
+            get_string('content_menu_title', 'block_featured_links', $this->get_accessibility_text()['sr-only']),
+            ['type' => 'edit']);
+        if ($this->is_visibility_applicable()) {
+            $action_menu_items[] = new \action_menu_link_secondary(
+                new \moodle_url('/blocks/featured_links/edit_tile_visibility.php',
+                    ['blockinstanceid' => $this->blockid, 'tileid' => $this->id, 'return_url' => $PAGE->url->out_as_local_url()]),
+                new \pix_icon('t/hide',
+                    ''),
+                get_string('visibility_menu_title','block_featured_links', $this->get_accessibility_text()['sr-only']),
+                ['type' => 'edit_vis']);
+        }
+        $action_menu_items[] = new \action_menu_link_secondary(
+            new \moodle_url('/'),
+            new \pix_icon('t/delete',
+                ''),
+            get_string('delete_menu_title','block_featured_links', $this->get_accessibility_text()['sr-only']),
+            ['type' => 'remove', 'blockid' => $this->blockid, 'tileid' => $this->id]);
+        return [
+            'tile_id' => $this->id,
+            'content' => $this->render_content($renderer),
+            'disabled' => (!$this->is_visible()),
+            'controls' => $renderer->render(
+                new \action_menu($action_menu_items)
+            )
+        ];
+    }
     /**
      * decodes the raw data variables
      */
     protected function decode_data() {
-        $this->data = json_decode($this->data_raw);
-        $this->presets = explode(',', $this->presets_raw);
-        $this->audiences = explode(',', $this->audiences_raw);
-        $this->data_filtered = $this->filter_values();
+        $this->data = json_decode($this->dataraw);
+        $preset_keys = explode(',', $this->presetsraw);
+        foreach ($preset_keys as $key){
+            $this->presets[$key] = 1;
+        }
+
+        $this->filter_data_values();
         $this->url_mod = isset($this->data->url) ? $this->data->url : '';
         if (substr($this->url_mod, 0, 1) == '/') {
             $this->url_mod = new \moodle_url($this->url_mod);
         }
     }
-
     /**
      * encodes the data ready to put into the database
      */
     protected function encode_data() {
-        $this->data_raw = json_encode($this->data);
-        $this->presets_raw = implode(',', $this->presets);
+        $this->dataraw = json_encode($this->data);
+        $this->presetsraw = implode(',', $this->presets);
+    }
+    /**
+     * Removes the unused values in the data object for the content form.
+     * This means that only the value that the tile uses will be updated and supplied to the content form
+     * and the tile template allows for values to be persistent when changing tile types.
+     * @return void
+     */
+    protected function filter_data_values () {
+        $this->data_filtered = new \stdClass();
+        if (empty($this->data)) {
+            return;
+        }
+        foreach ($this->data as $key => $value) {
+            if (in_array($key, $this->used_fields)) {
+                $this->data_filtered->$key = $value;
+            }
+        }
     }
 
 }

@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,32 +19,60 @@
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
  * @package block_featured_links
- *
- *
  */
-
-
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Gets a file so that it can be show to the user
- * @param $course
- * @param $birecord_or_cm
- * @param $context
- * @param $filearea
- * @param $args
- * @param $forcedownload
+ * @param int $course
+ * @param stdClass $birecord_or_cm
+ * @param stdClass $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
  * @param array $options
  * @return bool
  */
 function block_featured_links_pluginfile($course, $birecord_or_cm, $context, $filearea, $args, $forcedownload, array $options= []) {
+    global $CFG, $DB, $USER;
     $fs = get_file_storage();
-    $fullpath = "/{$context->id}/block_featured_links/$filearea/$args[0]/$args[1]";
+
+    if ($context->contextlevel != CONTEXT_BLOCK) {
+        send_file_not_found();
+    }
+    if ($context->get_course_context(false)) {
+        require_course_login($course);
+    } else if ($CFG->forcelogin) {
+        require_login();
+    } else {
+        // Get parent context and see if user have proper permission.
+        $parentcontext = $context->get_parent_context();
+        if ($parentcontext->contextlevel === CONTEXT_COURSECAT) {
+            // Check if category is visible and user can view this category.
+            $category = $DB->get_record('course_categories', ['id' => $parentcontext->instanceid], '*', MUST_EXIST);
+            if (!$category->visible) {
+                require_capability('moodle/category:viewhiddencategories', $parentcontext);
+            }
+        } else if ($parentcontext->contextlevel === CONTEXT_USER && $parentcontext->instanceid != $USER->id) {
+            // The block is in the context of a user, it is only visible to the user who it belongs to.
+            send_file_not_found();
+        }
+        // At this point there is no way to check SYSTEM context, so ignoring it.
+    }
+
+    $fileid = $args[0];
+    $filename = $args[1];
+    $tile_instane = \block_featured_links\tile\base::get_tile_instance($fileid);
+    if (!$tile_instane->can_edit_tile() && !$tile_instane->is_visible()) {
+        send_file_not_found();
+    }
+
+    $fullpath = "/{$context->id}/block_featured_links/{$filearea}/{$fileid}/{$filename}";
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-        return false;
+        send_file_not_found();
     }
     // Finally send the file.
-    send_stored_file($file, null, 0, $forcedownload, $options); // Download MUST be forced - security!
+    send_stored_file($file, null, 0, true, $options); // Download MUST be forced - security!
     return true;
 }

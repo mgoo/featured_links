@@ -1,8 +1,7 @@
-<?php
-/**
+/*
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +18,23 @@
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
  * @package block_featured_links
- *
- *
  */
 
-/**
- * Upgrades the database from an old version
- * @param int $oldversion
- * @return bool
- */
-function xmldb_block_featured_links_upgrade($oldversion) {
-    global $DB;
-    $dbman = $DB->get_manager();
-    // This is unused as the block has not being released yet.
-    return true;
-}
+define(['jquery'], function($){
+
+    var init = function(){
+        $('[name="type"]').change(function(event){
+             var url = window.location.href
+             if (url.match(/type=[^&;]+/)) {
+                url = url.replace(/type=[^&;]+/, 'type='+encodeURI($(event.target).val()));
+             } else {
+                url += '&type='+encodeURI($(event.target).val());
+             }
+            window.location = url;
+        });
+    };
+
+    return {
+        init: init
+    };
+});

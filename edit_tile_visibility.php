@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,49 +19,43 @@
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
  * @package block_featured_links
- *
- *
  */
 
-
-
-namespace block_featured_links\tile;
-
 require_once('../../config.php');
-
-global $PAGE, $OUTPUT, $CFG, $USER;
 require_once($CFG->libdir . '/pagelib.php');
 
 require_login();
 
-$blockinstanceid = required_param('blockinstanceid', PARAM_INT);
 $tileid = required_param('tileid', PARAM_INT);
 $return_url = optional_param('return_url', null, PARAM_LOCALURL);
+$tile_instance = \block_featured_links\tile\base::get_tile_instance($tileid);
 
 $PAGE->set_url(
     new \moodle_url(
-        '/blocks/featured_links/edit_tile_auth.php',
-        ['blockinstanceid' => $blockinstanceid, 'tileid' => $tileid, 'return_url' => $return_url]
+        '/blocks/featured_links/edit_tile_visibility.php',
+        ['tileid' => $tileid, 'return_url' => $return_url]
     )
 );
 
-$context = \context_block::instance($blockinstanceid, MUST_EXIST);
+$context = \context_block::instance($tile_instance->blockid, MUST_EXIST);
 $PAGE->set_context($context);
 
-$tile_class = base::get_tile_class($tileid);
-if ($USER->id != $tile_class->userid) {
-    require_capability('moodle/site:manageblocks', $context);
-} else {
-    //require_capability('totara/dashboard:manageblocks', $context); // TODO add capability
+
+// Checks that the user has the right permissions.
+if (!$tile_instance->can_edit_tile() || !$tile_instance->is_visibility_applicable()) {
+    print_error('cannot_edit_tile', 'block_featured_links');
 }
-$edit_form = $tile_class->edit_auth_form(['blockinstanceid' => $blockinstanceid, 'tileid' => $tileid, 'return_url' => $return_url]);
+$edit_form = $tile_instance->get_visibility_form(['blockinstanceid' => $tile_instance->blockid, 'tileid' => $tileid, 'return_url' => $return_url]);
 // Saves the data.
 if ($edit_form->is_cancelled()) {
     redirect(new \moodle_url($return_url));
 } else if (($form_data = $edit_form->get_data())) {
-    $tile_class->save_visibility($form_data);
+    $tile_instance->save_visibility($form_data);
     redirect(new \moodle_url($return_url));
 }
+
+$edit_form->requirements();
+// Draw page.
 
 echo $OUTPUT->header();
 echo $edit_form->render();

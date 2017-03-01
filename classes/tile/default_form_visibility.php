@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,16 +19,11 @@
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
  * @package block_featured_links
- *
- *
  */
-
-
 
 namespace block_featured_links\tile;
 
 defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Class default_form_auth
@@ -36,14 +31,21 @@ defined('MOODLE_INTERNAL') || die();
  * You can use this as an example for other tile types
  * @package block_featured_links\tile
  */
-class default_form_auth extends base_form_auth{
+class default_form_visibility extends base_form_visibility{
 
     /**
      * The default tile does not define any custom visibility rules for the tile
      * @return bool
      */
     public function has_custom_rules() {
-        return false;
+        return true;
+    }
+
+    /**
+     * @param $group
+     * @return array
+     */
+    public function specific_definition(&$mform) {
     }
 
     /**
@@ -51,6 +53,5 @@ class default_form_auth extends base_form_auth{
      * The default form does not have any.
      */
     public function requirements() {
-
     }
 }

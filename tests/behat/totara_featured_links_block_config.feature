@@ -1,4 +1,4 @@
-@block @javascript @block_featured_links
+@block @javascript @totara @block_featured_links
 Feature: Test edit the block config for the featured links block
   In order to be able to make the block look good
   the user needs to be able to configure the block
@@ -8,10 +8,10 @@ Feature: Test edit the block config for the featured links block
     And I follow "Dashboard"
     And I click on "Customise this page" "button"
     And I add the "Featured Links" block
-    And I click on "a[type=\"add\"]" "css_element"
+    And I click on "Add Tile" "link"
     And I wait "1" seconds
     And I set the following fields to these values:
-      | URL | www.google.com |
+      | URL | www.example.com |
       | Description | default description |
     And I click on "Save changes" "button"
 
@@ -20,15 +20,15 @@ Feature: Test edit the block config for the featured links block
 
   Scenario: Check that the block can be configured
     When I configure the "Featured Links" block
-    Then I should see "Title For the Block"
-    And I should see "Tile Size"
+    Then I should see "Title for the block"
+    And I should see "Tile size"
     And I should see "Manual ID"
 
   Scenario: Check that editing the config options changes the content of the block
     When I configure the "Featured Links" block
     And I set the following fields to these values:
-      | Title For the Block | Title |
-      | Tile Size           | small |
+      | Title for the block | Title |
+      | Tile size           | small |
       | Manual ID           |  a_unique_id_featured_links |
     And I press "Save changes"
     Then I should see "Title"
@@ -38,8 +38,8 @@ Feature: Test edit the block config for the featured links block
   Scenario: Check that canceling doesn't change the contents of the block
     When I configure the "Featured Links" block
     And I set the following fields to these values:
-      | Title For the Block | Title |
-      | Tile Size           | small |
+      | Title for the block | Title |
+      | Tile size           | small |
       | Manual ID           |  a_unique_id_featured_links |
     And I press "Cancel"
     Then ".block-featured-links-tile-medium" "css_element" should exist

@@ -21,12 +21,14 @@
  * @package block_featured_links
  */
 
+require_once('test_helper.php');
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Tests the generator for the featured_links block.
  */
-class block_featured_links_generator_testcase extends advanced_testcase {
+class block_featured_links_generator_testcase extends test_helper {
 
     /**
      * The block generator instance for the test.
@@ -43,21 +45,20 @@ class block_featured_links_generator_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests the \block_featured_links\tile\base::get_tile_class() method.
+     * Tests the \block_featured_links\tile\base::get_tile_instance() method.
      *
      * Here we want to test that the generator returns an accurate tile object that matches the real one.
      */
     public function test_create_default_tile() {
         global $DB;
         $this->resetAfterTest(); // Changing the database, we must reset.
-
         $blockinstance = $this->blockgenerator->create_instance();
         $tile = $this->blockgenerator->create_default_tile($blockinstance->id);
 
         // Test the basic assumptions, return value, it has been inserted and it exists.
         $this->assertInstanceOf('\block_featured_links\tile\default_tile', $tile); // Check it is a default tile record.
         $this->assertNotEmpty($tile->id); // Verify the ID has been set, useless without this!
-        $this->assertTrue($DB->record_exists('block_featured_tiles', ['id' => $tile->id]));
+        $this->assertTrue($DB->record_exists('block_featured_links_tiles', ['id' => $tile->id]));
 
         // Manually get the tile instance so that we can compare the real one with the generator one.
         $realtile = new \block_featured_links\tile\default_tile($tile->id);
@@ -77,10 +78,16 @@ class block_featured_links_generator_testcase extends advanced_testcase {
         // We now have an array of public properties from each, lets check they match exactly.
         foreach ($realtile_properties as $expectedname => $expectedvalue) {
             $this->assertArrayHasKey($expectedname, $tile_properties, 'The generated tile does not have the '.$expectedname.' property.');
+
             $this->assertEquals($expectedvalue, $tile_properties[$expectedname], 'The generated tile '.$expectedname.' property value does not match the real tiles value.');
 
-            // TODO: If you really want to write precise code then uncomment this line of code.
-            // $this->assertSame($expectedvalue, $tile_properties[$expectedname], 'The generated tile '.$expectedname.' property value is not of the same type as the real tiles value.');
+            // I'm excluding stdClass cause they have to point to the same object so it doesn't make sense for them to be the same here.
+            if (!$expectedvalue instanceof \stdClass && !$tile_properties[$expectedname] instanceof \stdClass) {
+                $this->assertSame($expectedvalue,
+                    $tile_properties[$expectedname],
+                    'The generated tile ' . $expectedname . ' property value is not of the same type as the real tiles value.'
+                );
+            }
 
             // Remove the property, you'll see why next!
             unset($tile_properties[$expectedname]);

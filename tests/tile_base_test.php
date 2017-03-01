@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of Totara LMS
  *
@@ -21,13 +20,16 @@
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
  * @package block_featured_links
  */
+require_once('test_helper.php');
+use block_featured_links\tile\base;
+
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Tests the static methods on the abstract \block_featured_links\tile\base class
  */
-class block_featured_links_tile_base_testcase extends advanced_testcase {
+class block_featured_links_tile_base_testcase extends test_helper {
 
     /**
      * The block generator instance for the test.
@@ -44,20 +46,20 @@ class block_featured_links_tile_base_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests the \block_featured_links\tile\base::get_tile_class() method.
+     * Tests the \block_featured_links\tile\base::get_tile_instance() method.
      */
-    public function test_get_tile_class() {
+    public function test_get_tile_instance() {
         $this->resetAfterTest(); // Changing the database, we must reset.
 
         // First up test with a real id.
         $blockinstance = $this->blockgenerator->create_instance();
         $tile = $this->blockgenerator->create_default_tile($blockinstance->id);
         $expected = '\block_featured_links\tile\default_tile';
-        $this->assertInstanceOf($expected, \block_featured_links\tile\base::get_tile_class($tile->id));
+        $this->assertInstanceOf($expected, base::get_tile_instance($tile->id));
 
         // Now test with an id that can't possibly exist.
         $this->setExpectedException('dml_missing_record_exception', 'Can not find data record in database');
-        \block_featured_links\tile\base::get_tile_class(-1);
+        base::get_tile_instance(-1);
     }
 
     /**
@@ -79,24 +81,24 @@ class block_featured_links_tile_base_testcase extends advanced_testcase {
         $tile2_c = $this->blockgenerator->create_default_tile($blockinstance2->id);
 
         // Test that both blocks have their tiles in the correct order.
-        $this->assertEquals(1, $tile1_a->sort);
-        $this->assertEquals(2, $tile1_b->sort);
-        $this->assertEquals(3, $tile1_c->sort);
+        $this->assertEquals(1, $tile1_a->sortorder);
+        $this->assertEquals(2, $tile1_b->sortorder);
+        $this->assertEquals(3, $tile1_c->sortorder);
 
-        $this->assertEquals(1, $tile2_a->sort);
-        $this->assertEquals(2, $tile2_b->sort);
-        $this->assertEquals(3, $tile2_c->sort);
+        $this->assertEquals(1, $tile2_a->sortorder);
+        $this->assertEquals(2, $tile2_b->sortorder);
+        $this->assertEquals(3, $tile2_c->sortorder);
 
         // Now mess them up.
-        // We do this directly in the database as we only want to test the base method, and not the blocks sort method.
-        $DB->set_field('block_featured_tiles', 'sort', '5', ['id' => $tile1_a->id]);
-        $DB->set_field('block_featured_tiles', 'sort', '9', ['id' => $tile1_b->id]);
-        $DB->set_field('block_featured_tiles', 'sort', '7', ['id' => $tile1_c->id]);
-        $DB->set_field('block_featured_tiles', 'sort', '8', ['id' => $tile2_a->id]);
-        $DB->set_field('block_featured_tiles', 'sort', '6', ['id' => $tile2_b->id]);
-        $DB->set_field('block_featured_tiles', 'sort', '4', ['id' => $tile2_c->id]);
+        // We do this directly in the database as we only want to test the base method, and not the blocks sortorder method.
+        $DB->set_field('block_featured_links_tiles', 'sortorder', '5', ['id' => $tile1_a->id]);
+        $DB->set_field('block_featured_links_tiles', 'sortorder', '9', ['id' => $tile1_b->id]);
+        $DB->set_field('block_featured_links_tiles', 'sortorder', '7', ['id' => $tile1_c->id]);
+        $DB->set_field('block_featured_links_tiles', 'sortorder', '8', ['id' => $tile2_a->id]);
+        $DB->set_field('block_featured_links_tiles', 'sortorder', '6', ['id' => $tile2_b->id]);
+        $DB->set_field('block_featured_links_tiles', 'sortorder', '4', ['id' => $tile2_c->id]);
 
-        // Refresh the objects and confirm the sort.
+        // Refresh the objects and confirm the sortorder.
         $tile1_a = new \block_featured_links\tile\default_tile($tile1_a->id);
         $tile1_b = new \block_featured_links\tile\default_tile($tile1_b->id);
         $tile1_c = new \block_featured_links\tile\default_tile($tile1_c->id);
@@ -105,18 +107,18 @@ class block_featured_links_tile_base_testcase extends advanced_testcase {
         $tile2_b = new \block_featured_links\tile\default_tile($tile2_b->id);
         $tile2_c = new \block_featured_links\tile\default_tile($tile2_c->id);
 
-        $this->assertEquals(5, $tile1_a->sort);
-        $this->assertEquals(9, $tile1_b->sort);
-        $this->assertEquals(7, $tile1_c->sort);
+        $this->assertEquals(5, $tile1_a->sortorder);
+        $this->assertEquals(9, $tile1_b->sortorder);
+        $this->assertEquals(7, $tile1_c->sortorder);
 
-        $this->assertEquals(8, $tile2_a->sort);
-        $this->assertEquals(6, $tile2_b->sort);
-        $this->assertEquals(4, $tile2_c->sort);
+        $this->assertEquals(8, $tile2_a->sortorder);
+        $this->assertEquals(6, $tile2_b->sortorder);
+        $this->assertEquals(4, $tile2_c->sortorder);
 
         // Now run squash ordering on the second block instance.
-        \block_featured_links\tile\base::squash_ordering($blockinstance2->id);
+        base::squash_ordering($blockinstance2->id);
 
-        // Refresh the objects and confirm the sort.
+        // Refresh the objects and confirm the sortorder.
         $tile1_a = new \block_featured_links\tile\default_tile($tile1_a->id);
         $tile1_b = new \block_featured_links\tile\default_tile($tile1_b->id);
         $tile1_c = new \block_featured_links\tile\default_tile($tile1_c->id);
@@ -125,18 +127,18 @@ class block_featured_links_tile_base_testcase extends advanced_testcase {
         $tile2_b = new \block_featured_links\tile\default_tile($tile2_b->id);
         $tile2_c = new \block_featured_links\tile\default_tile($tile2_c->id);
 
-        $this->assertEquals(5, $tile1_a->sort);
-        $this->assertEquals(9, $tile1_b->sort);
-        $this->assertEquals(7, $tile1_c->sort);
+        $this->assertEquals(5, $tile1_a->sortorder);
+        $this->assertEquals(9, $tile1_b->sortorder);
+        $this->assertEquals(7, $tile1_c->sortorder);
 
-        $this->assertEquals(3, $tile2_a->sort);
-        $this->assertEquals(2, $tile2_b->sort);
-        $this->assertEquals(1, $tile2_c->sort);
+        $this->assertEquals(3, $tile2_a->sortorder);
+        $this->assertEquals(2, $tile2_b->sortorder);
+        $this->assertEquals(1, $tile2_c->sortorder);
 
         // Now run squash ordering on the first block instance.
-        \block_featured_links\tile\base::squash_ordering($blockinstance1->id);
+        base::squash_ordering($blockinstance1->id);
 
-        // Refresh the objects and confirm the sort.
+        // Refresh the objects and confirm the sortorder.
         $tile1_a = new \block_featured_links\tile\default_tile($tile1_a->id);
         $tile1_b = new \block_featured_links\tile\default_tile($tile1_b->id);
         $tile1_c = new \block_featured_links\tile\default_tile($tile1_c->id);
@@ -145,13 +147,13 @@ class block_featured_links_tile_base_testcase extends advanced_testcase {
         $tile2_b = new \block_featured_links\tile\default_tile($tile2_b->id);
         $tile2_c = new \block_featured_links\tile\default_tile($tile2_c->id);
 
-        $this->assertEquals(1, $tile1_a->sort);
-        $this->assertEquals(3, $tile1_b->sort);
-        $this->assertEquals(2, $tile1_c->sort);
+        $this->assertEquals(1, $tile1_a->sortorder);
+        $this->assertEquals(3, $tile1_b->sortorder);
+        $this->assertEquals(2, $tile1_c->sortorder);
 
-        $this->assertEquals(3, $tile2_a->sort);
-        $this->assertEquals(2, $tile2_b->sort);
-        $this->assertEquals(1, $tile2_c->sort);
+        $this->assertEquals(3, $tile2_a->sortorder);
+        $this->assertEquals(2, $tile2_b->sortorder);
+        $this->assertEquals(1, $tile2_c->sortorder);
     }
 
     /**
@@ -165,7 +167,7 @@ class block_featured_links_tile_base_testcase extends advanced_testcase {
         $this->resetAfterTest(); // Changing the database, we must reset.
 
         $blockinstance = $this->blockgenerator->create_instance();
-        \block_featured_links\tile\base::squash_ordering($blockinstance->id);
+        base::squash_ordering($blockinstance->id);
     }
 
     /**
@@ -181,34 +183,34 @@ class block_featured_links_tile_base_testcase extends advanced_testcase {
         $tile2 = $this->blockgenerator->create_default_tile($blockinstance->id);
         $tile3 = $this->blockgenerator->create_default_tile($blockinstance->id);
 
-        $DB->set_field('block_featured_tiles', 'sort', '5', ['id' => $tile1->id]);
-        $DB->set_field('block_featured_tiles', 'sort', '5', ['id' => $tile2->id]);
-        $DB->set_field('block_featured_tiles', 'sort', '1', ['id' => $tile3->id]);
+        $DB->set_field('block_featured_links_tiles', 'sortorder', '5', ['id' => $tile1->id]);
+        $DB->set_field('block_featured_links_tiles', 'sortorder', '5', ['id' => $tile2->id]);
+        $DB->set_field('block_featured_links_tiles', 'sortorder', '1', ['id' => $tile3->id]);
 
-        // Refresh the objects and confirm the sort.
+        // Refresh the objects and confirm the sortorder.
         $tile1 = new \block_featured_links\tile\default_tile($tile1->id);
         $tile2 = new \block_featured_links\tile\default_tile($tile2->id);
         $tile3 = new \block_featured_links\tile\default_tile($tile3->id);
 
-        $this->assertEquals(5, $tile1->sort);
-        $this->assertEquals(5, $tile2->sort);
-        $this->assertEquals(1, $tile3->sort);
+        $this->assertEquals(5, $tile1->sortorder);
+        $this->assertEquals(5, $tile2->sortorder);
+        $this->assertEquals(1, $tile3->sortorder);
 
-        \block_featured_links\tile\base::squash_ordering($blockinstance->id);
+        base::squash_ordering($blockinstance->id);
 
         // Refresh the objects.
         $tile1 = new \block_featured_links\tile\default_tile($tile1->id);
         $tile2 = new \block_featured_links\tile\default_tile($tile2->id);
         $tile3 = new \block_featured_links\tile\default_tile($tile3->id);
 
-        // We don't know the exact sortorder now, what is important is that we no longer have a duplicate.
-        // So check that the sortorders are unique.
+        // We don't know the exact sortorderorder now, what is important is that we no longer have a duplicate.
+        // So check that the sortorderorders are unique.
         $sortorders = [
-            $tile1->sort,
-            $tile2->sort,
-            $tile3->sort,
+            $tile1->sortorder,
+            $tile2->sortorder,
+            $tile3->sortorder,
         ];
-        // This basically calls array_unique to remove duplicates. If there are duplicates then the number of
+        // This basically calls array_unique to remove duplicates. If there are duplicates then the number of.
         // values will decrease and will no longer match the number in the original array.
         $this->assertCount(count($sortorders), array_unique($sortorders));
     }
@@ -218,6 +220,189 @@ class block_featured_links_tile_base_testcase extends advanced_testcase {
      */
     public function test_get_name() {
         $this->setExpectedException('Exception', 'Please Override this function');
-        \block_featured_links\tile\base::get_name();
+        base::get_name();
+    }
+
+    public function test_get_next_sortorder() {
+        $this->resetAfterTest();
+        $base = $this->getMockForAbstractClass('\block_featured_links\tile\base');
+        $blockinstance = $this->blockgenerator->create_instance();
+        $this->assertEquals(1, $this->call_protected_method($base, 'get_next_sortorder', [$blockinstance->id]));
+        $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
+        $this->assertEquals(2, $this->call_protected_method($base, 'get_next_sortorder', [$blockinstance->id]));
+        $tile2 = $this->blockgenerator->create_default_tile($blockinstance->id);
+        $this->assertEquals(3, $this->call_protected_method($base, 'get_next_sortorder', [$blockinstance->id]));
+        $tile1->remove_tile();
+        $this->assertEquals(2, $this->call_protected_method($base, 'get_next_sortorder', [$blockinstance->id]));
+        $tile2->remove_tile();
+        $this->assertEquals(1, $this->call_protected_method($base, 'get_next_sortorder', [$blockinstance->id]));
+    }
+
+    public function test_remove_tile() {
+        global $DB;
+        $this->resetAfterTest();
+        $blockinstance = $this->blockgenerator->create_instance();
+        $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
+        $tile2 = $this->blockgenerator->create_default_tile($blockinstance->id);
+        // Remove the tile.
+        $this->assertTrue($tile1->remove_tile(), 'The tile failed to be removed');
+        // Check that the tile is no longer in the database.
+        $this->assertEmpty($DB->get_record('block_featured_links_tiles', ['id' => $tile1->id]), 'The tile was not removed from the database');
+        // Make sure you cant remove the same tile twice.
+        $this->assertFalse($tile1->remove_tile());
+        // The other tile should still exist.
+        $this->assertNotEmpty($DB->get_record('block_featured_links_tiles', ['id' => $tile2->id]), 'The wrong tile was removed');
+    }
+
+    public function test_save() {
+        global $DB;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $instance = $this->blockgenerator->create_instance();
+        $tile1 = $this->blockgenerator->create_default_tile($instance->id);
+        $tile2 = $this->blockgenerator->create_default_tile($instance->id);
+        $tile1_modify_time = $tile1->timemodified;
+        $this->waitForSecond();
+        $data = new \stdClass();
+        $data->type = 'not_a_plugin,not_a_class';
+        $data->sortorder = 4;
+        $data->url = 'www.example.com';
+        $tile1->save_content($data);
+        // Check the type was updated.
+        $this->assertEquals('not_a_plugin,not_a_class', $DB->get_field('block_featured_links_tiles', 'type', ['id' => $tile1->id]));
+        // Check the ordering changed.
+        $this->assertEquals(2, $DB->get_field('block_featured_links_tiles', 'sortorder', ['id' => $tile1->id]));
+        $this->assertEquals(1, $DB->get_field('block_featured_links_tiles', 'sortorder', ['id' => $tile2->id]));
+        // Check that the time modified changed.
+        $this->assertNotEquals($tile1_modify_time, $DB->get_field('block_featured_links_tiles', 'timemodified', ['id' => $tile1->id]));
+    }
+
+    public function test_save_ordering() {
+        global $DB;
+        $this->resetAfterTest();
+        $instance = $this->blockgenerator->create_instance();
+        $tile1 = $this->blockgenerator->create_default_tile($instance->id);
+        $tile2 = $this->blockgenerator->create_default_tile($instance->id);
+        $tile3 = $this->blockgenerator->create_default_tile($instance->id);
+        $tile4 = $this->blockgenerator->create_default_tile($instance->id);
+        $tile5 = $this->blockgenerator->create_default_tile($instance->id);
+
+        // Move 1 to the end.
+        $tile1->sortorder = 5;
+        $this->call_protected_method($tile1, 'save_ordering');
+        $this->refresh_tiles($tile1, $tile2, $tile3, $tile4, $tile5);
+        $this->assertEquals(5, $DB->get_field('block_featured_links_tiles', 'sortorder', ['id' => $tile1->id]));
+        // Move 4 past the end.
+        $tile4->sortorder = 10;
+        $this->call_protected_method($tile4, 'save_ordering');
+        $this->refresh_tiles($tile1, $tile2, $tile3, $tile4, $tile5);
+        $this->assertEquals(5, $DB->get_field('block_featured_links_tiles', 'sortorder', ['id' => $tile4->id]));
+        // Move 3 to its current position (2).
+        $this->call_protected_method($tile3, 'save_ordering');
+        $this->refresh_tiles($tile1, $tile2, $tile3, $tile4, $tile5);
+        $this->assertEquals(2, $DB->get_field('block_featured_links_tiles', 'sortorder', ['id' => $tile3->id]));
+        // Moving 4 to past the start.
+        $tile4->sortorder = -10;
+        $this->call_protected_method($tile4, 'save_ordering');
+        $this->refresh_tiles($tile1, $tile2, $tile3, $tile4, $tile5);
+        $this->assertEquals(1, $DB->get_field('block_featured_links_tiles', 'sortorder', ['id' => $tile4->id]));
+        // Move 3 down one to 2.
+        $tile3->sortorder = 2;
+        $this->call_protected_method($tile3, 'save_ordering');
+        $this->refresh_tiles($tile1, $tile2, $tile3, $tile4, $tile5);
+        $this->assertEquals(2, $DB->get_field('block_featured_links_tiles', 'sortorder', ['id' => $tile3->id]));
+    }
+
+    public function test_save_visibility () {
+        global $DB;
+        $this->resetAfterTest();
+        $blockinstance = $this->blockgenerator->create_instance();
+        $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
+        $data = new \stdClass();
+        $data->visibility = base::VISIBILITY_HIDE;
+        $tile1->save_visibility($data);
+
+        $this->assertEquals((string)base::VISIBILITY_HIDE, $DB->get_field('block_featured_links_tiles', 'visibility', ['id' => $tile1->id]));
+        $this->assertEquals(base::AGGREGATION_ANY, $DB->get_field('block_featured_links_tiles', 'overallaggregation', ['id' => $tile1->id]));
+
+        $data->preset_showing = 1;
+        $data->tile_rules_showing = 1;
+        $tile1->save_visibility($data);
+        // The *_showing fields shouldn't change because the visibility is not show.
+        $this->assertEquals('0', $DB->get_field('block_featured_links_tiles', 'presetshowing', ['id' => $tile1->id]));
+        $this->assertEquals('0', $DB->get_field('block_featured_links_tiles', 'tilerulesshowing', ['id' => $tile1->id]));
+
+        $data->visibility = base::VISIBILITY_CUSTOM;
+        $data->presets_checkboxes = ['loggedin'];
+        $tile1->save_visibility($data);
+        // The *_showing fields should now all be 1.
+        $this->assertEquals('1', $DB->get_field('block_featured_links_tiles', 'presetshowing', ['id' => $tile1->id]));
+        $this->assertEquals('1', $DB->get_field('block_featured_links_tiles', 'tilerulesshowing', ['id' => $tile1->id]));
+
+        $data->visibility = base::VISIBILITY_HIDE;
+        $tile1->save_visibility($data);
+
+    }
+
+    public function test_is_visible() {
+        $this->resetAfterTest();
+        $blockinstance = $this->blockgenerator->create_instance();
+        $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
+        $this->assertTrue($tile1->is_visible());
+        $data = new \stdClass();
+        $data->visibility = \block_featured_links\tile\base::VISIBILITY_HIDE;
+        $tile1->save_visibility($data);
+        $this->assertFalse($tile1->is_visible());
+    }
+
+    public function test_is_visible_preset() {
+        $this->resetAfterTest();
+
+        $blockinstance = $this->blockgenerator->create_instance();
+        $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
+        $data = new \stdClass();
+        $data->visibility = \block_featured_links\tile\base::VISIBILITY_CUSTOM;
+        $data->preset_showing = 1;
+        $data->presets_checkboxes = ['loggedin'];
+        $tile1->save_visibility($data);
+
+        $this->assertFalse($tile1->is_visible());
+        $this->setAdminUser();
+        $this->assertTrue($tile1->is_visible());
+    }
+
+    public function test_get_visibility_form_data() {
+        $this->resetAfterTest();
+        $blockinstance = $this->blockgenerator->create_instance();
+        $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
+        $data = $tile1->get_visibility_form_data();
+        $required_keys = ['visibility', 'presets_aggregation', 'overall_aggregation', 'preset_showing'];
+        foreach ($required_keys as $key) {
+            $this->assertTrue(isset($data[$key]), 'The key: '. $key.' does not exist in the array');
+        }
+    }
+
+    public function test_export_form_template_add_tile() {
+        global $PAGE;
+        $PAGE->set_url(new \moodle_url('/'));
+        $this->resetAfterTest();
+        $blockinstance = $this->blockgenerator->create_instance();
+        $data = base::export_for_template_add_tile($blockinstance->id);
+        $this->assertEquals('array', gettype($data));
+    }
+
+    public function test_is_visibility_applicable() {
+        global $DB, $USER;
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $blockinstance = $this->blockgenerator->create_instance();
+        $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
+        $this->assertTrue($tile1->is_visibility_applicable());
+        $block_data = $DB->get_record('block_instances', ['id' => $tile1->blockid]);
+        $block_data->pagetypepattern = 'my-dashboard-1'; // Sets the block to be on a dashboard.
+
+        $block_data->parentcontextid = array_values($DB->get_records('context', ['contextlevel' => 30], '', 'id'))[0]->id; // Sets the context to a users context.
+        $DB->update_record('block_instances', $block_data);
+        $this->assertFalse($tile1->is_visibility_applicable());
     }
 }

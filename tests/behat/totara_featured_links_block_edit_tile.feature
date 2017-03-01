@@ -5,15 +5,14 @@ Feature: Block edit test block
     - to edit the content of the tiles
     - edit the config of the block
 
-
   Background:
     When I log in as "admin"
     And I am on site homepage
     And I follow "Turn editing on"
     And I add the "Featured Links" block
-    And I click on "a[type=\"add\"]" "css_element"
+    And I click on "Add Tile" "link"
     And I set the following fields to these values:
-     | URL | www.google.com |
+     | URL | www.example.com |
      | textbody | default description |
     And I click on "Save changes" "button"
 
@@ -23,7 +22,7 @@ Feature: Block edit test block
 
   Scenario Outline: Editing the for actually changes the values in the tile
     When I click on "div.block-featured-links-edit div.moodle-actionmenu" "css_element"
-    When I click on "a[type=\"edit\"]" "css_element"
+    When I click on "Content" "link"
     And I set the following fields to these values:
       | Title       | <heading>  |
       | Description | <body>     |
@@ -32,22 +31,23 @@ Feature: Block edit test block
     Then I should see "<heading>"
     And I should see "<body>"
     And I should not see "default description"
-    When I click on ".block-featured-links-tile" "css_element"
+    # Needs to be like this as the link could either have the heading or the body string in it
+    When I click on ".block-featured-links-layout > div > a" "css_element"
     Then I should not see "totara"
 
     Examples:
       | heading | link | body |
-      | heading test | http://www.google.com   | bodyaheh |
-      | Some Heading | http://www.facebook.com | some body |
-      | head asvhba  | http://www.github.com   | body asd|
+      | | http://www.example.com | textbody |
+      | Some Heading | http://www.example.com | some body |
+      | heading  | http://www.example.com | |
 
   Scenario: Can the admin get to the edit form and cancel without effecting anything
     When I click on "div.block-featured-links-edit div.moodle-actionmenu" "css_element"
-    When I click on "a[type=\"edit\"]" "css_element"
+    When I click on "Content" "link"
     And I set the following fields to these values:
       | Title | Some Heading |
       | textbody | some body |
-      | URL      | http://www.google.com |
+      | URL      | http://www.example.com |
     And I press "Cancel"
     And I am on site homepage
     Then I should see "default description"

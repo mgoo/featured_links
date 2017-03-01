@@ -1,7 +1,7 @@
 /*
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,7 @@
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
  * @package block_featured_links
- *
- *
  */
-
 
 /**
  * contains the functions that do the ajax calls to add and remove tiles
@@ -36,32 +33,33 @@ define(['jquery', 'core/ajax', 'core/str'], function($, ajax, mdlstr){
             required_strings.push({key: 'confirm', component: 'block_featured_links'});
 
             mdlstr.get_strings(required_strings).done(function(strings){
-                $('a[type="remove"]').click(function(event){
+                var delete_button = $('a[type="remove"]');
+                delete_button.off('click');
+                delete_button.click(function(event){
                     event.preventDefault();
                     var confirm = new M.core.confirm({
                         question: strings[2],
                         modal: true,
                         yesLabel: strings[0],
                         noLabel: strings[1],
-                        title: '&nbsp;'
+                        title: '&nbsp;',
+                        zIndex: 500 // Set the z_index so the tile does not get on top of the dialog.
                     });
-
                     confirm.on('complete-yes', function() {
                         var parent_a = $(event.target).closest('a');
-                        var blockid = parent_a.attr('blockid');
                         var tileid  = parent_a.attr('tileid');
 
                         var promises = ajax.call([
                             {
-                                methodname: 'block_featured_links_external_remove_tile', args: {
-                                blockinstanceid: blockid,
-                                tileid: tileid
-                            }
+                                methodname: 'block_featured_links_external_remove_tile',
+                                args: {
+                                    tileid: tileid
+                                }
                             }
                         ]);
                         promises[0].done(function (response) {
                             if (response === true){
-                                $(event.target).closest('.block-featured-links-tile').hide();
+                                $(event.target).closest('.block-featured-links-layout > div').hide();
                             }
                         });
                     }, this);

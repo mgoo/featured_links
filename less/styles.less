@@ -1,196 +1,41 @@
-@import (reference) "../../../theme/bootstrapbase/less/bootstrap/variables.less";
-@padding-small-horizontal: 4px;
-@padding-vertical: 4px;
+//This file is part of Totara LMS
+//
+//Copyright (C) 2017 onwards Totara Learning Solutions LTD
+//
+//This program is free software; you can redistribute it and/or modify
+//it under the terms of the GNU General Public License as published by
+//the Free Software Foundation; either version 3 of the License, or
+//(at your option) any later version.
+//
+//This program is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//                          MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+//
+//You should have received a copy of the GNU General Public License
+//along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+//@author Andrew McGhie <andrew.mcghie@totaralearning.com>
+//@package block_featured_links
 
-div.tf_element_input input[type="color"]{
-    padding: 1px;
-    width: 44px;
-}
+@import "roots.less";
 
-.block-featured-links-layout{
-    display: inline-block; // for IE 9
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: stretch;
-    align-content: flex-start;
-}
-
-.block-featured-links-tile{
-    display: inline-block;
-    display: flex;
-    min-width: 0;
-    flex-grow: 1;
-    flex-shrink: 1;
-
-    align-content: stretch;
-
-    margin: @padding-small-horizontal;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: 50%;
-
-    position: relative;
-    width: 100%;
-    height: 100%;
-
-    .sr-only{
-        display: none;
-    }
-
-    .block-featured-links-link {
-        position:absolute;
-        top: 0;
+.dir-rtl{
+    .block-featured-links-edit > div{
+        right: auto;
         left: 0;
-        z-index: 1;
-        width: 100%;
-        height: 100%;
     }
-
-    &:before{
-        padding-top: 100%;
-        content: '';
-        display: table; // for firefox and edge
-    }
-
-    div.block-featured-links-default-content:not(.block-featured-links-edit){
-        &:empty{
-            display: none;
-        }
-        min-width: 0;
-        min-height: 0;
-
-        position: absolute;
-        top: auto;
-        bottom: 0;
-
-        width: 100%;
-        box-sizing: border-box;
-        text-align: start;
-        max-height: 100%;
-
-        background: rgba(0, 0, 0, .5);
-        color: whitesmoke;
-
-        h4 {
-            font-size: @fontSizeLarge;
-            margin-bottom: @padding-vertical;
-            margin-top: @padding-vertical;
-            font-weight: @headingsFontWeight;
-        }
-        p {
-            margin-bottom: @padding-vertical;
-        }
-        padding: @padding-vertical + @padding-vertical;
-    }
-
-    .block-featured-links-edit .moodle-actionmenu,
-    .block-featured-links-edit div.show  {
-        a.toggle-display{
-            position: absolute;
-            top: 0;
-            right: 0;
-
-            width: 36px;
-            height: 36px;
-
-            display: inline-block;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            z-index: 3;
-
-            img{
-                width: auto;
-            }
-
-            .ft-stack-suffix{
-                text-shadow: -1px 0 0 @gray,
-                    1px 0 0 @gray,
-                    0 -1px @gray,
-                    0 1px 0 @gray,
-                    1px 1px 0 @gray;
+    .block-featured-links-layout {
+        & > div {
+            .block-featured-links-edit .moodle-actionmenu,
+            .block-featured-links-edit div.show {
+                right: auto;
+                left: 0;
+                a.toggle-display {
+                    right: auto;
+                    left: 0;
+                }
             }
         }
-        position: absolute;
-        top: 0;
-        right: 0;
-
-        margin: 0;
-        padding: 0;
-
-        width: 36px;
-        height: 36px;
-
-        text-align: center;
-        background-color: rgba(255, 255, 255, .8);
     }
 }
-
-.block-featured-links-tile-small {
-    .block-featured-links-tile-size(140);
-}
-.block-featured-links-tile-medium{
-    .block-featured-links-tile-size(210);
-}
-.block-featured-links-tile-large{
-    .block-featured-links-tile-size(320);
-}
-
-.block-featured-links-tile-size(@size){
-    flex-basis: @size*1px;
-    width: @size*1px; // For browsers that do not support flex layout
-}
-
-.block-featured-links-flex-filler{
-    &:extend(.block-featured-links-tile);
-    margin: 0 10px;
-    height: 0;
-    padding: 0;
-    max-height: 0;
-    min-height: 0;
-}
-
-.block-featured-links-tile-adder{
-    display: inline-block;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: @linkColor dashed medium;
-    background-color: rgb(239, 239, 239);
-    a {
-        position: absolute;
-        top: 40%;
-        left: 30%;
-    }
-    @supports (display: flex) {
-        a {
-            top: auto;
-            bottom: auto;
-            left: auto;
-            right: auto;
-        }
-    }
-}
-.block-featured-links-tile div.block-featured-links-disabled:not(.block-featured-links-edit) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    min-height: 100%;
-    width: 100%;
-    z-index: 2;
-    background-color: rgba(200,200,200,.7);
-    cursor: default;
-    div{
-        width: auto;
-        height: auto;
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: auto;
-        background-color: rgba(200,200,200,.8);
-    }
-}
-

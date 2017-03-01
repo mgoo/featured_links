@@ -32,49 +32,31 @@
     * none
 
     Context variables required for this template:
-     * content string the html content of the tile
-     * disabled boolean whether the tile is disabled or not
-     * background_img array an array containing the url to the background image
-     * alt_text array and array that contains the text used for accessibility and is not shown
-     * background_color string the color of the background
-     * url string the url that the tile should link to
-     * controls string html code for an action menu
-
+    * tile_data an array of the data content of the tiles as well as if the tile is an adder or filler
 
     Other context variables for following partials:
      * none
 
     Example context (json):
       {
-            "content": "html displayed in the tile",
-            "disabled": true,
-            "background_img": {
-                "url": "http://172.17.0.1/totara-moodle/pluginfile.php/5/block_featured_links/tile_background/427332454/download%20%282%29.jpg",
-                "itemid": "427332454"
-            },
-            "alt_text": {
-                "tile_title": "alt_text",
-                "link_sr-only": "sr only text"
-            },
-            "background_color": "#11FFaa",
-            "url": "http://www.google.com",
-            "controls": "rendered html for an action menu"
+            "tile_data": [
+                {"filler": false,
+                    "adder": false,
+                    "content": "render html code of the content_wrapper template"},
+                {"adder: true},
+                {"filler": true}
+            ]
+            "manual_id": 2,
+            "editing": true,
+            "size": small,
+            "instanceid": 2 (the blockid)
       }
 }}
 <div class="block-featured-links-layout" {{#manual_id}}id="{{manual_id}}"{{/manual_id}}>
     {{#tile_data}}
         {{^filler}} <!-- if the tile is not a filler or the add tile tile -->
             {{^adder}}
-                <div class="block-featured-links-tile block-featured-links-tile-{{size}} block-featured-links-tile-{{tile_id}}" style="{{#background_img.url}}background-image: url('{{background_img.url}}');{{/background_img.url}}{{#background_color}}background-color: {{background_color}};{{/background_color}}" {{#alt_text.tile_title}}title="{{alt_text.tile_title}}"{{/alt_text.tile_title}}>
-                    {{^disabled}}<a class="block-featured-links-link" href="{{& url}}"><span class="sr-only">{{alt_text.link_sr-only}}</span></a>{{/disabled}}
-                    {{#disabled}}<div class="block-featured-links-disabled"><div>{{hidden_text}}</div></div>{{/disabled}}
-                    {{{content}}}
-                    {{#editing}}
-                        <div class="block-featured-links-edit">
-                            {{{controls}}}
-                        </div>
-                    {{/editing}}
-                </div>
+                {{{content}}}
             {{/adder}}
         {{/filler}}
         {{#filler}} <!-- filler tile -->

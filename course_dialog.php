@@ -2,7 +2,7 @@
 /**
  * This file is part of Totara LMS
  *
- * Copyright (C) 2010 onwards Totara Learning Solutions LTD
+ * Copyright (C) 2017 onwards Totara Learning Solutions LTD
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,24 @@
  *
  * @author Andrew McGhie <andrew.mcghie@totaralearning.com>
  * @package block_featured_links
- *
- *
  */
 
+require_once('../../config.php');
+require_once($CFG->dirroot.'/totara/core/dialogs/dialog_content_courses.class.php');
+require_once($CFG->dirroot.'/totara/core/js/lib/setup.php');
 
-function xmldb_block_featured_links_install() {
-    // This just has to exist it doesn't seem to matter if its empty.
-}
+$parentid = optional_param('parentid', 'cat0', PARAM_ALPHANUM);
+preg_match('/([0-9]+)$/', $parentid, $matches);
+$parentid = $matches[0];
+
+require_login();
+
+$PAGE->set_context(context_system::instance());
+
+// Load dialog content generator.
+$dialog = new totara_dialog_content_courses($parentid);
+$dialog->searchtype = 'course';
+$dialog->load_courses(true);
+$dialog->customdata['instanceid'] = $parentid;
+// Display page.
+echo $dialog->generate_markup();

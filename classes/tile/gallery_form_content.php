@@ -23,19 +23,17 @@
 
 namespace block_featured_links\tile;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class default_form_content
- * This is the default content form.
- * This can be used as an example for other tile types
+ * Class gallery_form_content
+ * Defines the content form for the multi tile
  * @package block_featured_links\tile
  */
-class default_form_content extends base_form_content{
+class gallery_form_content extends base_form_content {
 
     /**
      * The tile specific content options
-     * @param \moodleform $group
+     * @param $group
      * @return null
      */
     public function specific_definition(&$mform) {
@@ -55,7 +53,11 @@ class default_form_content extends base_form_content{
             'bottom' => get_string('bottom_heading', 'block_featured_links')
         ]);
 
-        $mform->addElement('filemanager', 'background_img', get_string('tile_background', 'block_featured_links'), ['subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1]);
+        $mform->addElement('filemanager', 'background_imgs', get_string('tile_gallery_background', 'block_featured_links'),
+            ['subdirs' => 0, 'maxbytes' => 0]);
+
+        $mform->addElement('text', 'interval', get_string('interval', 'block_featured_links'));
+        $mform->setType('interval', PARAM_INT);
 
         $mform->addElement('text', 'alt_text', get_string('tile_alt_text', 'block_featured_links'));
         $mform->setType('alt_text', PARAM_TEXT);

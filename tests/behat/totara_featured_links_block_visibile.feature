@@ -1,6 +1,5 @@
 @block @javascript @totara @block_featured_links
 Feature: Check that the visibility options for the tiles work correctly
-  The User should be able to hide the tile based on whether other users are in an audience or they match some
   preset rules.
   The User should be able to set aggregation options for all of these so they can make sure they can hide the tile from
   the people they want while showing it to the people who need to see it.
@@ -37,14 +36,14 @@ Feature: Check that the visibility options for the tiles work correctly
     And I am on site homepage
     And I follow "Turn editing on"
     And I add the "Featured Links" block
-    And I click on "a[type=\"add\"]" "css_element"
-    And I set the field "url" to "www.google.com"
+    And I click on "Add Tile" "link"
+    And I set the field "url" to "www.example.com"
     And I set the field "textbody" to "default description"
     And I click on "Save changes" "button"
 
   Scenario: Test javascript with custom visibility rules works
     When I click on "div.block-featured-links-edit div.moodle-actionmenu" "css_element"
-    And I click on "a[type=\"edit_vis\"]" "css_element"
+    And I click on "Visibility" "link"
     Then I should see "Edit Visibility"
     When I set the "Access" Totara form field to "Apply rules"
     And I click on "Expand all" "text"
@@ -62,25 +61,26 @@ Feature: Check that the visibility options for the tiles work correctly
     And I click on "OK" "button"
     And I wait "1" seconds
     Then I should see "Test_cohort_name"
-    When I click on "Save changes" "button"
-    Then ".block-featured-links-tile" "css_element" should exist
+    When I set the "Condition required to view" Totara form field to "User is logged in"
+    And I click on "Save changes" "button"
+    Then "default description" "link" should exist
 
   Scenario: Test that setting hidden from everyone hides the tile
     When I click on "div.block-featured-links-edit div.moodle-actionmenu" "css_element"
-    And I click on "a[type=\"edit_vis\"]" "css_element"
+    And I click on "Visibility" "link"
     And I click on "Hidden from all" "text"
     And I click on "Save changes" "button"
     Then ".block-featured-links-disabled" "css_element" should exist
     And I follow "Turn editing off"
-    And ".block-featured-links-tile" "css_element" should not exist
+    And "default description" "link" should not exist
     When I log out
     And I log in as "user1"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
 
   Scenario: Test that the tile can be hidden by audience
     When I click on "div.block-featured-links-edit div.moodle-actionmenu" "css_element"
-    And I click on "a[type=\"edit_vis\"]" "css_element"
+    And I click on "Visibility" "link"
     And I set the "Access" Totara form field to "Apply rules"
     And I click on "Expand all" "text"
     And I set the "Define access by audience rules" Totara form field to "1"
@@ -88,19 +88,20 @@ Feature: Check that the visibility options for the tiles work correctly
     And I follow "Test_cohort_name"
     And I click on "OK" "button"
     And I click on "Save changes" "button"
-    Then ".block-featured-links-tile" "css_element" should exist
+    And I follow "Turn editing off"
+    Then "default description" "link" should exist
     When I log out
     And I log in as "user1"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should exist
+    Then "default description" "link" should exist
     When I log out
     And I log in as "user3"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
 
   Scenario: Test that that all aggregation on audiences hides the tile from people who aren't in all the audiences
     When I click on "div.block-featured-links-edit div.moodle-actionmenu" "css_element"
-    And I click on "a[type=\"edit_vis\"]" "css_element"
+    And I click on "Visibility" "link"
     And I set the "Access" Totara form field to "Apply rules"
     And I click on "Expand all" "text"
     And I set the "Define access by audience rules" Totara form field to "1"
@@ -114,44 +115,44 @@ Feature: Check that the visibility options for the tiles work correctly
       # In both the audiences.
     And I log in as "user2"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should exist
+    Then "default description" "link" should exist
     When I log out
       # In one audienece but not both.
     And I log in as "user1"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
     When I log out
     And I log in as "user3"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
     When I log out
      # Not in any of the audiences.
     And I log in as "user4"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
 
   Scenario: Check the the is site administrator preset rule works
     When I click on "div.block-featured-links-edit div.moodle-actionmenu" "css_element"
-    And I click on "a[type=\"edit_vis\"]" "css_element"
+    And I click on "Visibility" "link"
     And I set the "Access" Totara form field to "Apply rules"
     And I click on "Expand all" "text"
     And I set the "Define access by preset rules" Totara form field to "1"
     And I set the "Condition required to view" Totara form field to "User is site administrator"
     And I click on "Save changes" "button"
     And I follow "Turn editing off"
-    Then ".block-featured-links-tile" "css_element" should exist
+    Then "default description" "link" should exist
     When I log out
     And I log in as "user1"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
     When I log out
     And I log in as "user2"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
 
   Scenario: Test the aggregation between the presets work correctly
     When I click on "div.block-featured-links-edit div.moodle-actionmenu" "css_element"
-    And I click on "a[type=\"edit_vis\"]" "css_element"
+    And I click on "Visibility" "link"
     And I set the "Access" Totara form field to "Apply rules"
     And I click on "Expand all" "text"
     And I set the "Define access by preset rules" Totara form field to "1"
@@ -159,19 +160,19 @@ Feature: Check that the visibility options for the tiles work correctly
     And I set the "Preset rule aggregation" Totara form field to "All of the selected preset rules above"
     And I click on "Save changes" "button"
     And I follow "Turn editing off"
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
     When I log out
     And I log in as "user1"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
     When I log out
     And I log in as "user2"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
 
   Scenario: Tests the aggregation between the audiences and the presets work correctly
     When I click on "div.block-featured-links-edit div.moodle-actionmenu" "css_element"
-    And I click on "a[type=\"edit_vis\"]" "css_element"
+    And I click on "Visibility" "link"
     And I set the "Access" Totara form field to "Apply rules"
     And I click on "Expand all" "text"
     And I set the "Define access by preset rules" Totara form field to "1"
@@ -182,20 +183,32 @@ Feature: Check that the visibility options for the tiles work correctly
     And I click on "OK" "button"
     And I set the "Ruleset aggregation" Totara form field to "Users matching all of the criteria above can view this feature link"
     And I click on "Save changes" "button"
-    Then ".block-featured-links-tile" "css_element" should exist
+    And I follow "Turn editing off"
+    Then "default description" "link" should exist
     When I log out
     And I log in as "user1"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
     When I log out
     And I log in as "user2"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
     When I log out
     And I log in as "user3"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
     When I log out
     And I log in as "user4"
     And I am on site homepage
-    Then ".block-featured-links-tile" "css_element" should not exist
+    Then "default description" "link" should not exist
+
+    Scenario: Tests visibility options arnt avalible on dashboard
+      When I follow "Dashboard"
+      And I click on "Customise this page" "button"
+      And I add the "Featured Links" block
+      And I click on "Add Tile" "link"
+      And I set the following fields to these values:
+        | URL | www.example.com |
+        | textbody | default description |
+      And I click on "Save changes" "button"
+      Then "Visibility" "link" should not exist
