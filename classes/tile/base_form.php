@@ -23,6 +23,8 @@
 
 namespace block_featured_links\tile;
 
+use block_featured_links\form\renderer\custom_form_renderer;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/formslib.php");
@@ -37,7 +39,13 @@ abstract class base_form extends \moodleform{
     protected $tile;
 
     public function __construct($tile, $action = null, $customdata = null, $method = 'post', $target = '', $attributes = null, $editable = true, $ajaxformdata = null) {
+        global $CFG;
         $this->tile = $tile;
+        $GLOBALS['_HTML_QuickForm_default_renderer'] = new custom_form_renderer();
+        \MoodleQuickForm::registerElementType('color', "$CFG->dirroot/blocks/featured_links/classes/form/element/color.php", 'block_featured_links\form\element\color');
+        \MoodleQuickForm::registerElementType('number', "$CFG->dirroot/blocks/featured_links/classes/form/element/number.php", 'block_featured_links\form\element\number');
+        \MoodleQuickForm::registerRule('is_subclass_of_tile_base', 'callback', 'validate', '\block_featured_links\form\validator\is_subclass_of_tile_base');
+        \MoodleQuickForm::registerRule('is_color', 'callback', 'validate', '\block_featured_links\form\validator\is_color');
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
     }
 
@@ -45,7 +53,7 @@ abstract class base_form extends \moodleform{
      * Defines the wrapping for the form defined in specific definition
      * makes tile type and position appear on every form
      */
-    protected function definition(){
+    protected function definition() {
 
     }
 

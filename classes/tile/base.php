@@ -303,7 +303,6 @@ abstract class base{
      * @return array
      */
     public function get_visibility_form_data() {
-//        var_dump($this->presets);
         $data = [
             'visibility' => ['visibility' => $this->visibility],
             'preset_aggregation' => ['preset_aggregation' => $this->presetsaggregation],

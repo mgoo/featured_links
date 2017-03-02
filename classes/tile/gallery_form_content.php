@@ -23,6 +23,7 @@
 
 namespace block_featured_links\tile;
 
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class gallery_form_content
@@ -64,6 +65,7 @@ class gallery_form_content extends base_form_content {
 
         $mform->addElement('color', 'background_color', get_string('tile_background_color', 'block_featured_links'));
         $mform->setType('background_color', PARAM_TEXT);
+        $mform->addRule('background_color', get_string('color_error', 'block_featured_links'), 'is_color');
         return;
     }
 
@@ -72,11 +74,5 @@ class gallery_form_content extends base_form_content {
      */
     public function requirements () {
         parent::requirements();
-        global $PAGE;
-        $PAGE->requires->css(new \moodle_url('/blocks/featured_links/spectrum/spectrum.css'));
-        $PAGE->requires->strings_for_js(['less', 'clear_color'], 'block_featured_links');
-        $PAGE->requires->strings_for_js(['cancel', 'choose', 'more'], 'moodle');
-        $PAGE->requires->js_call_amd('block_featured_links/spectrum', 'spectrum');
-        $PAGE->add_body_class('contains-spectrum-colorpicker');
     }
 }

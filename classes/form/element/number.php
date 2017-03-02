@@ -1,10 +1,12 @@
 <?php
 namespace block_featured_links\form\element;
-use HTML_QuickForm_input;
-require_once("HTML/QuickForm/input.php");
+global $CFG;
+require_once($CFG->libdir.'/form/text.php');
+use MoodleQuickForm_text;
 
-class number extends HTML_QuickForm_input
-{
+
+
+class number extends MoodleQuickForm_text {
     /**
      * Class constructor
      *
@@ -15,11 +17,8 @@ class number extends HTML_QuickForm_input
      */
     public function __construct($elementName=null, $elementLabel=null, $attributes=null) {
         parent::__construct($elementName, $elementLabel, $attributes);
-        $this->_persistantFreeze = true;
         $this->setType('number');
+        $this->_attributes['class'] = 'form-control';
     }
 
-    public function HTML_QuickForm_text($elementName=null, $elementLabel=null, $attributes=null) {
-        self::__construct($elementName, $elementLabel, $attributes);
-    }
 }

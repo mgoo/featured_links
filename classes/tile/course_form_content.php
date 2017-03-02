@@ -23,6 +23,7 @@
 
 namespace block_featured_links\tile;
 
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class course_form_content
@@ -33,21 +34,27 @@ class course_form_content extends base_form_content {
 
     /**
      * Defines the input for the course id.
-     * @param \moodleform $group
+     * @param \moodleform $mform
      * @return null
      */
     public function specific_definition(&$mform) {
-        $mform->addElement('text', 'course_name_id', get_string('course_name_label', 'block_featured_links'));
-        $mform->setType('course_name_id', PARAM_INT);
+        global $DB;
+        $courses = $DB->get_records('course', [], '', 'fullname,id');
+        $course_options = [];
+        foreach($courses as $course){
+            $course_options[$course->id] = $course->fullname;
+        }
 
-        $mform->addElement('select', 'heading_location', get_string('heading_location', 'block_featured_links'),[
+        $mform->addElement('autocomplete', 'course_name_id', get_string('course_name_label', 'block_featured_links'), $course_options, []);
+
+       $mform->addElement('select', 'heading_location', get_string('heading_location', 'block_featured_links'),[
             'top' => get_string('top_heading', 'block_featured_links'),
             'bottom' => get_string('bottom_heading', 'block_featured_links')
         ]);
 
         $mform->addElement('color', 'background_color', get_string('tile_background_color', 'block_featured_links'));
         $mform->setType('background_color', PARAM_TEXT);
-        return;
+        $mform->addRule('background_color', get_string('color_error', 'block_featured_links'), 'is_color');
     }
 
     /**
@@ -56,12 +63,6 @@ class course_form_content extends base_form_content {
      */
     public function requirements () {
         parent::requirements();
-        global $PAGE, $DB;
-        $PAGE->requires->css(new \moodle_url('/blocks/featured_links/spectrum/spectrum.css'));
-        $PAGE->requires->strings_for_js(['less', 'clear_color', 'course_select'], 'block_featured_links');
-        $PAGE->requires->strings_for_js(['cancel', 'choose', 'more'], 'moodle');
-        $PAGE->requires->js_call_amd('block_featured_links/spectrum', 'spectrum');
-        $PAGE->add_body_class('contains-spectrum-colorpicker');
     }
 
 }

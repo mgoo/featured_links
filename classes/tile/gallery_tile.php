@@ -134,7 +134,6 @@ class gallery_tile extends base {
         global $CFG;
         // Saves the Draft area.
         $draftitemid = file_get_submitted_draft_itemid('background_imgs');
-        var_dump($draftitemid);
         file_save_draft_area_files($draftitemid,
             \context_block::instance($this->blockid)->__get('id'),
             'block_featured_links', 'tile_background',

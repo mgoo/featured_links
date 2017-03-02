@@ -40,9 +40,7 @@ abstract class base_form_content extends base_form {
      * which basically includes ordering and tile type
      */
     public function definition() {
-        global $DB, $CFG;
-        $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES']['color'] = [$CFG->dirroot.'/blocks/featured_links/classes/form/element/color.php', 'block_featured_links\form\element\color'];
-        $GLOBALS['HTML_QUICKFORM_ELEMENT_TYPES']['number'] = [$CFG->dirroot.'/blocks/featured_links/classes/form/element/number.php', 'block_featured_links\form\element\number'];
+        global $DB;
         $mform = $this->_form;
         $mform->disable_form_change_checker();
 
@@ -58,6 +56,7 @@ abstract class base_form_content extends base_form {
         }
 
         $mform->addElement('select', 'type', get_string('tile_types', 'block_featured_links'), $class_options);
+        $mform->addRule('type', 'Not vaild class', 'is_subclass_of_tile_base');
 
         $this->specific_definition($mform);
 
@@ -65,8 +64,9 @@ abstract class base_form_content extends base_form {
         if ($DB->count_records('block_featured_links_tiles', ['id' => $this->tile->id]) == 0) {
             $max++;
         }
-        $mform->addElement('number', 'sortorder', get_string('tile_position', 'block_featured_links'), ['type' => 'number', 'max' => max(1, $max), 'min' => 1]);
+        $mform->addElement('number', 'sortorder', get_string('tile_position', 'block_featured_links'), 'max="'.max(1, $max).'" min="1" type="number" ');
         $mform->setType('sortorder', PARAM_INT);
+
         $this->add_action_buttons();
     }
 
@@ -86,7 +86,13 @@ abstract class base_form_content extends base_form {
      * Gets the requirements for the form
      */
     public function requirements() {
-
+        parent::requirements();
+        global $PAGE;
+        $PAGE->requires->css(new \moodle_url('/blocks/featured_links/spectrum/spectrum.css'));
+        $PAGE->requires->strings_for_js(['less', 'clear_color'], 'block_featured_links');
+        $PAGE->requires->strings_for_js(['cancel', 'choose', 'more'], 'moodle');
+        $PAGE->requires->js_call_amd('block_featured_links/spectrum', 'spectrum');
+        $PAGE->add_body_class('contains-spectrum-colorpicker');
     }
 
     public abstract function specific_definition(&$mfom);
