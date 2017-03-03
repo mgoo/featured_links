@@ -1,11 +1,11 @@
-@block @javascript @totara @block_featured_links
+@block @javascript @block_featured_links
 Feature: Test edit the block config for the featured links block
   In order to be able to make the block look good
   the user needs to be able to configure the block
 
   Background:
     When I log in as "admin"
-    And I follow "Dashboard"
+    And I click on "nav > a:first-child" "css_element"
     And I click on "Customise this page" "button"
     And I add the "Featured Links" block
     And I click on "Add Tile" "link"

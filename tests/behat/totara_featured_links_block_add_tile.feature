@@ -1,4 +1,4 @@
-@block @javascript @totara @block_featured_links
+@block @javascript @block_featured_links
   Feature: Test the add tile button in the Featured Links block
     To be able to use this block the user must be able to add and remove tiles
     when adding tile and removing them they should be in the correct order
@@ -6,7 +6,7 @@
 
     Background:
       When I log in as "admin"
-      And I follow "Dashboard"
+      And I click on "nav > a:first-child" "css_element"
       And I click on "Customise this page" "button"
       And I add the "Featured Links" block
 

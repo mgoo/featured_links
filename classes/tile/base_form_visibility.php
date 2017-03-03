@@ -75,8 +75,8 @@ abstract class base_form_visibility extends base_form {
         $preset_aggregation = [];
         $preset_aggregation[] = $mform->createElement('radio', 'preset_aggregation', '', get_string('preset_aggregation_any', 'block_featured_links'), base::AGGREGATION_ANY);
         $preset_aggregation[] = $mform->createElement('radio', 'preset_aggregation', '', get_string('preset_aggregation_all', 'block_featured_links'), base::AGGREGATION_ALL);
-        $mform->addGroup($preset_aggregation, 'preset_aggregation', get_string('preset_aggregation_label', 'block_featured_links'), '<br>');
-        $mform->disabledIf('preset_aggregation', 'preset_showing');
+        $mform->addGroup($preset_aggregation, 'presets_aggregation', get_string('preset_aggregation_label', 'block_featured_links'), '<br>');
+        $mform->disabledIf('presets_aggregation', 'preset_showing');
 
         if ($this->has_custom_rules()) {
             $mform->addElement('header', 'custom_header', get_string('tilerules_title', 'block_featured_links'));
@@ -94,6 +94,7 @@ abstract class base_form_visibility extends base_form {
             $mform->disabledIf('overall_aggregation', 'tile_rules_showing', 'notchecked');
             $mform->disabledIf('overall_aggregation', 'preset_showing', 'notchecked');
         }
+
         $this->add_action_buttons();
     }
 

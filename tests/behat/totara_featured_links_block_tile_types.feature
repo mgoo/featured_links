@@ -1,17 +1,17 @@
-@block @javascript @totara @block_featured_links
+@block @javascript @block_featured_links
 Feature: Test that the tile types other than the default tile work as expected
   Makes sure that the other tile types work correctly
 
   Background:
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Turn editing on"
+    And I click on "nav > a:first-child" "css_element"
+    And I click on "Customise this page" "button"
     And I add the "Featured Links" block
     And I click on "Add Tile" "link"
 
   @_file_upload
   Scenario: Test the label top tile
-    When I set the following Totara form fields to these values:
+    When I set the following fields to these values:
       | URL | www.example.com  |
       | textbody | default description |
       | Heading location | Top         |

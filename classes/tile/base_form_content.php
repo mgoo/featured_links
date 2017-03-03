@@ -24,6 +24,7 @@
 namespace block_featured_links\tile;
 
 use block_featured_links\lib\class_component;
+use MoodleQuickForm;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,6 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  * @package block_featured_links\tile
  */
 abstract class base_form_content extends base_form {
+
+    /** @var MoodleQuickForm $mform  */
+    public $mform;
 
     /**
      * Defines the main part of the form

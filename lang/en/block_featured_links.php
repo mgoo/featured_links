@@ -93,6 +93,7 @@ $string['top_tile_name'] = 'Label Top';
 $string['featured_links:addinstance'] = 'Add a new Featured Links block';
 $string['featured_links:edit'] = 'Edit the tiles in the block';
 $string['featured_links:myaddinstance'] = 'Add a new Featured Links block to the page';
+$string['url_required'] = 'Please Enter a URL';
 $string['url_title'] = 'URL';
 $string['url_title_help'] = 'URLs starting with a slash (/) will have the site\'s web address added. This is the preferred way to define links within the LMS as it ensures they will continue to work if the site\'s URL changes.';
 $string['visibility_edit'] = 'Edit Visibility';

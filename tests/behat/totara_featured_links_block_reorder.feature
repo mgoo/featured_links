@@ -1,10 +1,10 @@
-@block @javascript @totara @block_featured_links
+@block @javascript @block_featured_links
 Feature: Test the reordering tiles using drag and drop
   This is meant to test the drag and drop reordering however I coulnt seem to get this to work
 
   Background:
     When I log in as "admin"
-    And I follow "Dashboard"
+    And I click on "nav > a:first-child" "css_element"
     And I click on "Customise this page" "button"
     And I add the "Featured Links" block
 

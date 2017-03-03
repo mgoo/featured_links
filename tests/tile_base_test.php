@@ -319,7 +319,7 @@ class block_featured_links_tile_base_testcase extends test_helper {
         $blockinstance = $this->blockgenerator->create_instance();
         $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
         $data = new \stdClass();
-        $data->visibility = base::VISIBILITY_HIDE;
+        $data->visibility['visibility'] = base::VISIBILITY_HIDE;
         $tile1->save_visibility($data);
 
         $this->assertEquals((string)base::VISIBILITY_HIDE, $DB->get_field('block_featured_links_tiles', 'visibility', ['id' => $tile1->id]));
@@ -332,16 +332,13 @@ class block_featured_links_tile_base_testcase extends test_helper {
         $this->assertEquals('0', $DB->get_field('block_featured_links_tiles', 'presetshowing', ['id' => $tile1->id]));
         $this->assertEquals('0', $DB->get_field('block_featured_links_tiles', 'tilerulesshowing', ['id' => $tile1->id]));
 
-        $data->visibility = base::VISIBILITY_CUSTOM;
-        $data->presets_checkboxes = ['loggedin'];
+        $data->visibility['visibility'] = base::VISIBILITY_CUSTOM;
+        $data->presets = ['loggedin' => 1];
         $tile1->save_visibility($data);
+        $this->refresh_tiles($tile1);
         // The *_showing fields should now all be 1.
         $this->assertEquals('1', $DB->get_field('block_featured_links_tiles', 'presetshowing', ['id' => $tile1->id]));
         $this->assertEquals('1', $DB->get_field('block_featured_links_tiles', 'tilerulesshowing', ['id' => $tile1->id]));
-
-        $data->visibility = base::VISIBILITY_HIDE;
-        $tile1->save_visibility($data);
-
     }
 
     public function test_is_visible() {
@@ -350,7 +347,7 @@ class block_featured_links_tile_base_testcase extends test_helper {
         $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
         $this->assertTrue($tile1->is_visible());
         $data = new \stdClass();
-        $data->visibility = \block_featured_links\tile\base::VISIBILITY_HIDE;
+        $data->visibility['visibility'] = \block_featured_links\tile\base::VISIBILITY_HIDE;
         $tile1->save_visibility($data);
         $this->assertFalse($tile1->is_visible());
     }
@@ -361,11 +358,11 @@ class block_featured_links_tile_base_testcase extends test_helper {
         $blockinstance = $this->blockgenerator->create_instance();
         $tile1 = $this->blockgenerator->create_default_tile($blockinstance->id);
         $data = new \stdClass();
-        $data->visibility = \block_featured_links\tile\base::VISIBILITY_CUSTOM;
+        $data->visibility['visibility'] = \block_featured_links\tile\base::VISIBILITY_CUSTOM;
         $data->preset_showing = 1;
-        $data->presets_checkboxes = ['loggedin'];
+        $data->presets = ['loggedin' => 1];
         $tile1->save_visibility($data);
-
+        $this->refresh_tiles($tile1);
         $this->assertFalse($tile1->is_visible());
         $this->setAdminUser();
         $this->assertTrue($tile1->is_visible());

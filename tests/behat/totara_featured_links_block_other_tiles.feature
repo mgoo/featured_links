@@ -1,4 +1,4 @@
-@block @totara @javascript @block_featured_links
+@block @javascript @block_featured_links
   Feature: Tests adding the functionality of the other tiles packed with the block
     There are other tiles that come with the featured links block other than the static tile
       - test the content form
@@ -6,7 +6,7 @@
 
   Background:
     When I log in as "admin"
-    And I follow "Dashboard"
+    And I click on "nav > a:first-child" "css_element"
     And I click on "Customise this page" "button"
     And I add the "Featured Links" block
     And I click on "Add Tile" "link"

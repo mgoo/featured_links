@@ -303,10 +303,16 @@ abstract class base{
      * @return array
      */
     public function get_visibility_form_data() {
+        $presets = [];
+        $preset_keys = explode(',', $this->presetsraw);
+        foreach ($preset_keys as $key){
+            $presets[$key] = 1;
+        }
+
         $data = [
             'visibility' => ['visibility' => $this->visibility],
-            'preset_aggregation' => ['preset_aggregation' => $this->presetsaggregation],
-            'presets' => $this->presets,
+            'presets_aggregation' => ['preset_aggregation' => $this->presetsaggregation],
+            'presets' => $presets,
             'overall_aggregation' => ['overall_aggregation' => $this->overallaggregation],
             'preset_showing' => $this->presetshowing,
             'tile_rules_showing' => $this->tilerulesshowing
@@ -364,7 +370,7 @@ abstract class base{
             $this->set_default_visibility();
         } else {
             $this->presetsraw = !isset($data->presets) ? '' : implode(',', array_keys($data->presets));
-            $this->presetsaggregation = empty($data->preset_aggregation['preset_aggregation']) ? (string)self::AGGREGATION_ANY : $data->preset_aggregation['preset_aggregation'];
+            $this->presetsaggregation = empty($data->presets_aggregation['preset_aggregation']) ? (string)self::AGGREGATION_ANY : $data->presets_aggregation['preset_aggregation'];
             $this->overallaggregation = empty($data->overall_aggregation['overall_aggregation']) ? (string)self::AGGREGATION_ANY : $data->overall_aggregation['overall_aggregation'];
             $this->tilerules = $this->save_visibility_tile($data);
             $this->presetshowing = !isset($data->preset_showing) ? 0 : $data->preset_showing;
@@ -432,7 +438,6 @@ abstract class base{
      * @return bool
      */
     final public function is_visible() {
-        global $USER;
         if (empty($this->visibility)) {
             return true;
         }
@@ -447,35 +452,35 @@ abstract class base{
             if ($this->presetshowing) {
                 $preset_matches = 0;
                 $preset_restrictions = 0;
-                if (in_array('loggedin', $this->presets)) {
+                if (in_array('loggedin', ($this->presets))) {
                     if (isloggedin()) {
                         $preset_matches++;
                     } else {
                         $preset_restrictions++;
                     }
                 }
-                if (in_array('notloggedin', $this->presets)) {
+                if (in_array('notloggedin', ($this->presets))) {
                     if (!isloggedin()) {
                         $preset_matches++;
                     } else {
                         $preset_restrictions++;
                     }
                 }
-                if (in_array('guest', $this->presets)) {
+                if (in_array('guest', ($this->presets))) {
                     if (isguestuser()) {
                         $preset_matches++;
                     } else {
                         $preset_restrictions++;
                     }
                 }
-                if (in_array('notguest', $this->presets)) {
+                if (in_array('notguest', ($this->presets))) {
                     if (!isguestuser()) {
                         $preset_matches++;
                     } else {
                         $preset_restrictions++;
                     }
                 }
-                if (in_array('admin', $this->presets)) {
+                if (in_array('admin', ($this->presets))) {
                     if (is_siteadmin()) {
                         $preset_matches++;
                     } else {
@@ -675,11 +680,7 @@ abstract class base{
      */
     protected function decode_data() {
         $this->data = json_decode($this->dataraw);
-        $preset_keys = explode(',', $this->presetsraw);
-        foreach ($preset_keys as $key){
-            $this->presets[$key] = 1;
-        }
-
+        $this->presets = explode(',', $this->presetsraw);
         $this->filter_data_values();
         $this->url_mod = isset($this->data->url) ? $this->data->url : '';
         if (substr($this->url_mod, 0, 1) == '/') {

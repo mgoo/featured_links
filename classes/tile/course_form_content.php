@@ -34,7 +34,7 @@ class course_form_content extends base_form_content {
 
     /**
      * Defines the input for the course id.
-     * @param \moodleform $mform
+     * @param \MoodleQuickForm $mform
      * @return null
      */
     public function specific_definition(&$mform) {
@@ -46,8 +46,9 @@ class course_form_content extends base_form_content {
         }
 
         $mform->addElement('autocomplete', 'course_name_id', get_string('course_name_label', 'block_featured_links'), $course_options, []);
+        $mform->addRule('course_name_id', get_string('course_not_found', 'block_featured_links'), 'required');
 
-       $mform->addElement('select', 'heading_location', get_string('heading_location', 'block_featured_links'),[
+        $mform->addElement('select', 'heading_location', get_string('heading_location', 'block_featured_links'),[
             'top' => get_string('top_heading', 'block_featured_links'),
             'bottom' => get_string('bottom_heading', 'block_featured_links')
         ]);

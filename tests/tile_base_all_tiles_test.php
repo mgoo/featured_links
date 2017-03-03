@@ -43,7 +43,7 @@ class block_featured_links_tile_base_all_tiles_testcase extends test_helper {
     public function setUp() {
         parent::setUp();
         $this->blockgenerator = $this->getDataGenerator()->get_plugin_generator('block_featured_links');
-        $this->tile_types = \core_component::get_namespace_classes('tile', 'block_featured_links\tile\base');
+        $this->tile_types = \block_featured_links\lib\class_component::get_namespace_classes('tile', 'block_featured_links\tile\base');
     }
 
     /**
@@ -80,7 +80,7 @@ class block_featured_links_tile_base_all_tiles_testcase extends test_helper {
                 new $tile_type(-1);
                 $this->fail('Should not reach this exception');
             } catch (\dml_missing_record_exception $e) {
-                $this->assertEquals("Can not find data record in database. (SELECT * FROM {block_featured_links_tiles} WHERE id = ?\n[array (\n  0 => -1,\n)])",
+                $this->assertEquals("Can not find data record in database table block_featured_links_tiles. (SELECT * FROM {block_featured_links_tiles} WHERE id = ?\n[array (\n  0 => -1,\n)])",
                     $e->getMessage());
             }
         }

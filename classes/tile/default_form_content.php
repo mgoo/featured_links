@@ -31,16 +31,18 @@ defined('MOODLE_INTERNAL') || die();
  * This can be used as an example for other tile types
  * @package block_featured_links\tile
  */
-class default_form_content extends base_form_content{
+class default_form_content extends base_form_content
+{
 
     /**
      * The tile specific content options
-     * @param \moodleform $mform
+     * @param \MoodleQuickForm $mform
      * @return null
      */
     public function specific_definition(&$mform) {
         $mform->addElement('text', 'url', get_string('url_title', 'block_featured_links'));
         $mform->setType('url', PARAM_URL);
+        $mform->addRule('url', get_string('url_required', 'block_featured_links'), 'required');
 
         $mform->addElement('advcheckbox', 'target', get_string('link_target_label', 'block_featured_links'), '', [], ['_blank', '_self']);
 
@@ -59,6 +61,7 @@ class default_form_content extends base_form_content{
 
         $mform->addElement('text', 'alt_text', get_string('tile_alt_text', 'block_featured_links'));
         $mform->setType('alt_text', PARAM_TEXT);
+        $mform->addFormRule(['\block_featured_links\form\validator\alt_text_required', 'validate']);
 
         $mform->addElement('color', 'background_color', get_string('tile_background_color', 'block_featured_links'));
         $mform->setType('background_color', PARAM_TEXT);
@@ -69,7 +72,7 @@ class default_form_content extends base_form_content{
     /**
      * The form requires the javascirpt and css for spectrum as well as passing in the strings
      */
-    public function requirements () {
+    public function requirements() {
         parent::requirements();
     }
 }

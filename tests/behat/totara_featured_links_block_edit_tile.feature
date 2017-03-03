@@ -1,4 +1,4 @@
-@block @totara @javascript @block_featured_links
+@block @javascript @block_featured_links
 Feature: Block edit test block
   In order to use the block
   The user must be able
@@ -7,8 +7,8 @@ Feature: Block edit test block
 
   Background:
     When I log in as "admin"
-    And I am on site homepage
-    And I follow "Turn editing on"
+    And I click on "nav > a:first-child" "css_element"
+    And I click on "Customise this page" "button"
     And I add the "Featured Links" block
     And I click on "Add Tile" "link"
     And I set the following fields to these values:
@@ -49,7 +49,6 @@ Feature: Block edit test block
       | textbody | some body |
       | URL      | http://www.example.com |
     And I press "Cancel"
-    And I am on site homepage
     Then I should see "default description"
     And I should not see "Some Heading"
     And I should not see "some body"

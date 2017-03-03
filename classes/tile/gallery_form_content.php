@@ -34,7 +34,7 @@ class gallery_form_content extends base_form_content {
 
     /**
      * The tile specific content options
-     * @param $group
+     * @param \MoodleQuickForm $mform
      * @return null
      */
     public function specific_definition(&$mform) {
@@ -66,6 +66,9 @@ class gallery_form_content extends base_form_content {
         $mform->addElement('color', 'background_color', get_string('tile_background_color', 'block_featured_links'));
         $mform->setType('background_color', PARAM_TEXT);
         $mform->addRule('background_color', get_string('color_error', 'block_featured_links'), 'is_color');
+
+        $mform->addFormRule(['\block_featured_links\form\validator\alt_text_required', 'validate']);
+
         return;
     }
 
