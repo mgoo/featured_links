@@ -649,7 +649,8 @@ abstract class base{
                 ['blockinstanceid' => $this->blockid, 'tileid' => $this->id, 'return_url' => $PAGE->url->out_as_local_url()]),
             new \pix_icon('t/edit',
                 ''),
-            get_string('content_menu_title', 'block_featured_links', $this->get_accessibility_text()['sr-only']),
+            get_string('content_menu_title','block_featured_links').'<span class="sr-only">'.get_string('content_menu_title_sr-only', 'block_featured_links',
+                $this->get_accessibility_text()['sr-only']). '</span>',
             ['type' => 'edit']);
         if ($this->is_visibility_applicable()) {
             $action_menu_items[] = new \action_menu_link_secondary(
@@ -657,14 +658,16 @@ abstract class base{
                     ['blockinstanceid' => $this->blockid, 'tileid' => $this->id, 'return_url' => $PAGE->url->out_as_local_url()]),
                 new \pix_icon('t/hide',
                     ''),
-                get_string('visibility_menu_title','block_featured_links', $this->get_accessibility_text()['sr-only']),
+                get_string('visibility_menu_title','block_featured_links').'<span class="sr-only">'.get_string('visibility_menu_title_sr-only','block_featured_links',
+                    $this->get_accessibility_text()['sr-only']).'</span>',
                 ['type' => 'edit_vis']);
         }
         $action_menu_items[] = new \action_menu_link_secondary(
             new \moodle_url('/'),
             new \pix_icon('t/delete',
                 ''),
-            get_string('delete_menu_title','block_featured_links', $this->get_accessibility_text()['sr-only']),
+            get_string('delete_menu_title','block_featured_links').'<span class="sr-only">'.get_string('delete_menu_title_sr-only','block_featured_links',
+                $this->get_accessibility_text()['sr-only']).'</span>',
             ['type' => 'remove', 'blockid' => $this->blockid, 'tileid' => $this->id]);
         return [
             'tile_id' => $this->id,

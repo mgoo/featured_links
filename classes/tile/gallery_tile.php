@@ -152,6 +152,7 @@ class gallery_tile extends base {
         foreach ($files as $file) {
             $this->data->background_imgs[] = $file->get_filename();
         }
+	unset($this->data->background_img);
 
         /* Checks if the url starts with the wwwroot.
          * If it does it strips the wwwroot so it can be added back dynamically

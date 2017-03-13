@@ -167,6 +167,7 @@ class default_tile extends base{
         if ($file = reset($files)) {
             $this->data->background_img = $file->get_filename();
         }
+	unset($this->data->background_imgs);
 
         /* Checks if the url starts with the wwwroot.
          * If it does it strips the wwwroot so it can be added back dynamically
